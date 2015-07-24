@@ -517,7 +517,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                           /* Source ID : 1 : Connected to input terminal */
         0x58,0x02,                      /* Digital multiplier org:0x00,0x40,*/
         0x03,                           /* Size of controls field for this terminal : 3 bytes */
-        0x00,0x00,0x00,/*0xdf,0x45,0x00,*/                 /* Brightness Contrast Saturation sharpness, BLC, gain, mains freq, wb -0x1B,0x37,0x00
+        0x11,0x00,0x00,/*0xdf,0x45,0x00,*/                 /* Brightness Contrast Saturation sharpness, BLC, gain, mains freq, wb -0x1B,0x37,0x00
          	 	 	 	 	 	 	 	   controls supported   0x01,0x00,0x00 or 0x1B, 0x37, 0x00*/
         0x00,                           /* String desc index : Not used */
 

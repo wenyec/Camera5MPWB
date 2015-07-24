@@ -227,7 +227,7 @@ volatile static CyBool_t stiflag = CyFalse;             /* Whether the image is 
 #define CamModeIndex 28 // the index of camera mode
 static uint8_t CtrlParArry[32][24]={
 		{BLCModeReg          , BLCModeReg           , 2,    0,    0,    3,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{BrightnessReg1      , BrightnessReg0       , 2,    0,    0,  255,    0, 1, 0, 3, 0, 118, 0, 118, 199, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},
+		{0x15/*BrightnessReg1*/      , 0x15/*BrightnessReg0*/       , 2,    0,    0,  255,    0, 1, 0, 3, 0, 118, 0, 118, 199, I2C_EAGLESDP_ADDR/*I2C_DevAdd_C6*/,      CyTrue,  CyTrue, 0},
 		{ContrastReg         , ContrastReg          , 2,    0,    0,  255,    0, 1, 0, 3, 0, 112, 0, 112,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},
 		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
 		{MainsFreqReg        , MainsFreqReg         , 2,    0,    0,    1,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
@@ -499,6 +499,7 @@ inline void ControlHandle(uint8_t CtrlID){
 					 break;
 
 			 	 case BrgtCtlID1:
+			 		 /* cancel for 5MP w/b camera
 					 Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
 					 Data1 = CtrlParArry[CtrlID][14];  //SensorGetControl(RegAdd1, devAdd);
 					 if (Data1&0x2){ //check the sign bit (bit1)
@@ -509,7 +510,17 @@ inline void ControlHandle(uint8_t CtrlID){
 					 glEp0Buffer[0] = Data1;
 					 glEp0Buffer[1] = 0;
 					 sendData = glEp0Buffer[0];
-					 break;
+					 */
+					 Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
+					  if(Data0&0x80){
+						  Data0 = ~Data0;
+					  }else{
+						  Data0 = Data0 + 0x80;
+					  }
+					 glEp0Buffer[0] = Data0;
+					 glEp0Buffer[1] = 0;
+					 sendData = glEp0Buffer[0];
+			 		 break;
 				 case HueCtlID5:
 					 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//SensorGetControl(HuectrlRegRed, devAdd);
 					 glEp0Buffer[0] = glEp0Buffer[0] + GREEN_BASE;
@@ -770,6 +781,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							 ExUCtrlParArry[locCtrlID][16] = CyTrue;
 							 break;
 				  	  	 case BrgtCtlID1:
+#if 0 //cancel for 5MP w/b camera
 							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							  /****** double check the register0 Data1 ******/
@@ -790,6 +802,21 @@ inline void ControlHandle(uint8_t CtrlID){
 							 CtrlParArry[CtrlID][13] = Data0;
 							 CtrlParArry[CtrlID][14] = Data1;
 							 CtrlParArry[CtrlID][16] = CyTrue;
+#endif
+							 dataIdx = 0;
+							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+							  /****** double check the register0 Data1 ******/
+							  if(Data0&0x80){
+								  Data0 = Data0 - 0x80;
+							  }else{
+								  Data0 = ~Data0;
+							  }
+						  	 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //First
+							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+
+							 CtrlParArry[CtrlID][13] = Data0;
+							 CtrlParArry[CtrlID][16] = CyTrue;
+
 
 							 break;
 						 case HueCtlID5:  //mapping to hue control registers
