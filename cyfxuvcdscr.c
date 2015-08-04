@@ -443,7 +443,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0xFC,0x00,//0x0E,0x01,                      /* Total length of this and all sub-descriptors. */
         0x03,                           /* Number of interfaces */
 #else
-        0xE9,0x00,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
+        0x2D,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
         0x02,                           /* Number of interfaces */
 #endif
         0x01,                           /* Configuration number */
@@ -593,7 +593,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x01,                           /* Descriptotor Subtype : Input Header */
         0x01,                           /* 1 format desciptor follows */
-        0x57,0x00,//0x47,0x00,                      /* Total size of Class specific VS descr */
+        0x9B,0x00,//0x47,0x00,                      /* Total size of Class specific VS descr */
         CY_FX_EP_BULK_VIDEO,            /* EP address for BULK video data */
         0x00,                           /* No dynamic format change supported */
         0x04,                           /* Output terminal ID : 4 */
@@ -609,7 +609,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x04,                           /* Subtype : uncompressed format I/F */
         0x01,                           /* Format desciptor index */
-        0x01,                           /* Number of frame descriptor followed */
+        0x03,                           /* Number of frame descriptor followed */
         0x59,0x55,0x59,0x32,            /* GUID used to identify streaming-encoding format: YUY2 --> Is this correct, the order I got from Wim, next 3 lines are reversed?????????? */
         0x00,0x00,0x10,0x00,			/* From Wim: 00 00 00 10,*/
         0x80,0x00,0x00,0xAA,			/*         : 80 00 00 AA,*/
@@ -620,7 +620,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x09,                           /* Y dimension of the pictuer aspect ratio: Non-interlaced */
         0x00,                           /* Interlace Flags: Progressive scanning, no interlace */
         0x00,                           /* duplication of the video stream restriction: 0 - no restriction */
-#if 0
+#if 1
         /* Class specific Uncompressed VS frame descriptor 1 for 1080p*/
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
@@ -673,24 +673,44 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
 #endif
 
+        /* Class specific Uncompressed VS frame descriptor 3 for 720p Res 1290x720*/
+        0x1E,                           /* Descriptor size */
+        0x24,                           /* Descriptor type*/
+        0x05,                           /* Subtype: uncompressed frame I/F */
+        0x02,                           /* Frame Descriptor Index */
+        0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
+        0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
+        0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
+        0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
+        0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
+#ifndef CAM720
+        0x2A,0x2C,0x0A,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
+        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
+        0x2A,0x2C,0x0A,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
+#else
+        0x0A,0x8B,0x02,0x00,            /* Default Frame Interval 60fps 0x0A,0x8B,0x02,0x00 */
+        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
+        0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
+#endif
+
 
 #if 1
         /* Class specific VS Still Image Frame descriptor for Method 2/3*/
-         0x0A,                           /* Descriptor size */
+         0x12,                           /* Descriptor size */
          0x24,                           /* Descriptor type*/
          0x03,                           /* Subtype: still image frame I/F */
          0x00/*CY_FX_EP_BULK_IMAGE:0x87*/,            /* EP address for BULK still image */
-         0x01,                           /* Number of image size pattern */
-#ifndef CAM720
-        //0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
-        //0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
+         0x03,                           /* Number of image size pattern */
+ //three res' of still image
+        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
+        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
         0x20, 0x0A,                     /* Width in pixel  2592 (0x20, 0x0A) 1280 (0x00, 0x05)**********************************************************************************/
         0x98, 0x07,                     /* Height in pixel 1944 (0x98, 0x07) 720 (0xd0, 0x02) **********************************************************************************/
-#else
         0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
         0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
-#endif
-         0x00,                           /* Number of compression pattern of this format */
+
+        0x00,                           /* Number of compression pattern of this format */
          //0x00,                           /* The uncompression still image */
 #endif
 
