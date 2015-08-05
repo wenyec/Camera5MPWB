@@ -620,79 +620,52 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x09,                           /* Y dimension of the pictuer aspect ratio: Non-interlaced */
         0x00,                           /* Interlace Flags: Progressive scanning, no interlace */
         0x00,                           /* duplication of the video stream restriction: 0 - no restriction */
-#if 1
-        /* Class specific Uncompressed VS frame descriptor 1 for 1080p*/
+
+        /* Class specific Uncompressed VS frame descriptor 1 for Full Res 2592x1944*/
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
         0x05,                           /* Subtype: uncompressed frame I/F */
         0x01,                           /* Frame Descriptor Index */
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
-#ifndef CAM720
-        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
-        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
-#else
-        0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
-        0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
-#endif
+        0x20, 0x0A,                     /* Width in pixel  2592(0x20, 0x0A) 1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
+        0x98, 0x07,                     /* Height in pixel 1944(0x98, 0x07) 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
         0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
-        0x00,0x28,0x26,0x84, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
-        0x00,0xA4,0x1F,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
-#ifndef CAM720
-        0x15,0x16,0x05,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
+        0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
+        0x2A,0x2C,0x0A,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
-        0x15,0x16,0x05,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
-#else
-        0x0A,0x8B,0x02,0x00,            /* Default Frame Interval 60fps 0x0A,0x8B,0x02,0x00 */
-        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
-        0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
-#endif
-#endif
-        /* Class specific Uncompressed VS frame descriptor 2 for Full Res 2592x1944*/
+        0x2A,0x2C,0x0A,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
+
+        /* Class specific Uncompressed VS frame descriptor 2 for 1080p*/
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
         0x05,                           /* Subtype: uncompressed frame I/F */
         0x02,                           /* Frame Descriptor Index */
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
-#ifndef CAM720
-        0x20, 0x0A,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
-        0x98, 0x07,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
-#else
-        0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
-        0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
-#endif
+        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
+        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
         0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
-        0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
-        0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
-#ifndef CAM720
-        0x2A,0x2C,0x0A,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
+        0x00,0x28,0x26,0x84, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0xA4,0x1F,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
+        0x15,0x16,0x05,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
-        0x2A,0x2C,0x0A,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
-#else
-        0x0A,0x8B,0x02,0x00,            /* Default Frame Interval 60fps 0x0A,0x8B,0x02,0x00 */
-        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
-        0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
-#endif
+        0x15,0x16,0x05,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
 
         /* Class specific Uncompressed VS frame descriptor 3 for 720p Res 1290x720*/
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
         0x05,                           /* Subtype: uncompressed frame I/F */
-        0x02,                           /* Frame Descriptor Index */
+        0x03,                           /* Frame Descriptor Index */
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
         0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
         0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
         0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
         0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
         0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
-#ifndef CAM720
-        0x2A,0x2C,0x0A,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
-        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
-        0x2A,0x2C,0x0A,0x00,            /* Shortest Frame Interval 30fps :0x15,0x16,0x05,0x00, 25fps: 0x80,0x1a,0x06,0x00,*/
-#else
+
         0x0A,0x8B,0x02,0x00,            /* Default Frame Interval 60fps 0x0A,0x8B,0x02,0x00 */
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
         0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
-#endif
 
 
 #if 1
