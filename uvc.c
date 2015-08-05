@@ -274,6 +274,7 @@ static uint8_t CtrlParArry[32][24]={
 #else
 	static uint8_t CamMode = 1; //1:720p
 #endif
+	static uint8_t setRes = 0;  // 1:2592x1944; 2:1920x1080; 3:1280x720; 0:n/a
 
 static uint8_t ExUCtrlParArry[16][24]={
 		{0x13/*Ext1BLCRangeCtlID0 position*/ , 0x14/*size*/ , 2,    1,    0,    3,    0, 1, 0, 3, 0, 0x23, 0x37, 0x23, 0x37, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
@@ -2447,10 +2448,29 @@ UVCAppThread_Entry (
                     CyU3PThreadSleep(1000);
                     SensorSetIrisControl(0x4, 0x30, 0x80, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 #endif
-                    CyU3PThreadSleep(1000);
-                    SensorSetIrisControl(0x1, 0x30, 0x20, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-                    CyU3PThreadSleep(1000);
+                    //SensorSetIrisControl(0x4, 0x30, 0x80, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                    //CyU3PThreadSleep(1000);
+#if 0
+                    switch (setRes)
+                    {
+                    	case 1: //1944
+                    		SensorSetIrisControl(0x1, 0x30, 0xA0, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                    		CyU3PThreadSleep(1000);
+                    		break;
+                    	case 2: //1080
+                    		SensorSetIrisControl(0x1, 0x30, 0x90, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                    		CyU3PThreadSleep(1000);
+                    		break;
+                    	case 3: //720
+                    		SensorSetIrisControl(0x1, 0x30, 0x80, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                    		CyU3PThreadSleep(1000);
+                    		break;
+                    	default:
+                    		break;
+                    }
+#endif
                     CyFxUvcAppGpifInit ();
+
                     gpif_initialized = CyTrue;
                     CyU3PThreadSleep(200);
                     
@@ -2898,6 +2918,8 @@ UVCHandleVideoStreamingRqts (
                     if (usbSpeed == CY_U3P_SUPER_SPEED)
                     {
                         CyU3PUsbSendEP0Data (CY_FX_UVC_MAX_PROBE_SETTING, (uint8_t *)glProbeCtrlFull);
+                        CyU3PDebugPrint (4, "video stream GET request Code: %d, \n", bRequest);
+
                     }
                     else
                     {
@@ -2923,9 +2945,14 @@ UVCHandleVideoStreamingRqts (
                             //glProbeCtrl[19] = glCommitCtrl[19];
                             //glProbeCtrl[20] = glCommitCtrl[20];
                             //glProbeCtrl[21] = glCommitCtrl[21];
-
-
-                        }
+#if 0
+                            CyU3PDebugPrint (4, "video stream SET request Code: %d\n", bRequest);
+                            CyU3PDebugPrint (4, "video stream GET Ctrl Code: %d, %d, %d, %d, %d, %d, %d\n", bRequest,
+                            		glCommitCtrl[2], glCommitCtrl[3], glCommitCtrl[4],
+                            		glCommitCtrl[5], glCommitCtrl[6], glCommitCtrl[7]);
+#endif
+                            //setRes = glProbeCtrlFull[3]; //set resolution flag
+                       }
                     }
                     break;
                 default:
@@ -2964,6 +2991,23 @@ UVCHandleVideoStreamingRqts (
                             glCommitCtrl, &readCount);
                     if (apiRetStatus == CY_U3P_SUCCESS)
                     {
+                        switch (glCommitCtrl[3])
+                         {
+                         	case 1: //1944
+                         		SensorSetIrisControl(0x1, 0x30, 0xA0, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		CyU3PThreadSleep(1000);
+                         		break;
+                         	case 2: //1080
+                         		SensorSetIrisControl(0x1, 0x30, 0x90, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		CyU3PThreadSleep(1000);
+                         		break;
+                         	case 3: //720
+                         		SensorSetIrisControl(0x1, 0x30, 0x80, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		CyU3PThreadSleep(1000);
+                         		break;
+                         	default:
+                         		break;
+                         }
 #if 0
                     	if (usbSpeed == CY_U3P_SUPER_SPEED)
                         {
