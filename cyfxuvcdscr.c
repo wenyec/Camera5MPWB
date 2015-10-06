@@ -443,7 +443,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0xFC,0x00,//0x0E,0x01,                      /* Total length of this and all sub-descriptors. */
         0x03,                           /* Number of interfaces */
 #else
-        0x2D,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
+        0x25/*0x2D*/,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
         0x02,                           /* Number of interfaces */
 #endif
         0x01,                           /* Configuration number */
@@ -593,7 +593,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x01,                           /* Descriptotor Subtype : Input Header */
         0x01,                           /* 1 format desciptor follows */
-        0x9B,0x00,//0x47,0x00,                      /* Total size of Class specific VS descr */
+        0x93/*0x9B*/,0x00,//0x47,0x00,          /* Total size of Class specific VS descr */
         CY_FX_EP_BULK_VIDEO,            /* EP address for BULK video data */
         0x00,                           /* No dynamic format change supported */
         0x04,                           /* Output terminal ID : 4 */
@@ -670,18 +670,18 @@ const uint8_t CyFxUSBSSConfigDscr[] =
 
 #if 1
         /* Class specific VS Still Image Frame descriptor for Method 2/3*/
-         0x12,                           /* Descriptor size */
+         0x0A,//0x12,                           /* Descriptor size */
          0x24,                           /* Descriptor type*/
          0x03,                           /* Subtype: still image frame I/F */
          0x00/*CY_FX_EP_BULK_IMAGE:0x87*/,            /* EP address for BULK still image */
-         0x03,                           /* Number of image size pattern */
+         0x01,                           /* Number of image size pattern */
  //three res' of still image
-        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
-        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
+        //0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
+        //0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
         0x20, 0x0A,                     /* Width in pixel  2592 (0x20, 0x0A) 1280 (0x00, 0x05)**********************************************************************************/
         0x98, 0x07,                     /* Height in pixel 1944 (0x98, 0x07) 720 (0xd0, 0x02) **********************************************************************************/
-        0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
-        0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
+        //0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
+        //0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
 
         0x00,                           /* Number of compression pattern of this format */
          //0x00,                           /* The uncompression still image */

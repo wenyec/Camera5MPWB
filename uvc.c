@@ -94,6 +94,7 @@ VdRingBuf        statQu;                //the state queue
 CyU3PMutex       cmdQuMux;
 CyU3PMutex       staQuMux;
 CyU3PMutex       timMux;
+CyU3PMutex       imgHdMux;
 
 /* Current UVC control request fields. See USB specification for definition. */
 uint8_t  bmReqType, bRequest;                           /* bmReqType and bRequest fields. */
@@ -211,7 +212,8 @@ volatile static CyBool_t hitFV = CyFalse;               /* Whether end of frame 
 volatile static CyBool_t gpif_initialized = CyFalse;    /* Whether the GPIF init function has been called. */
 volatile static uint16_t prodCount = 0, consCount = 0;  /* Count of buffers received and committed during
                                                            the current video frame. */
-volatile static CyBool_t stiflag = CyFalse;             /* Whether the image is still image */
+//volatile static CyBool_t stiflag = CyFalse;             /* Whether the image is still image */
+volatile static uint8_t stiflag = 0;             /* Whether the image is still image */
 //volatile static uint16_t stillcont = 0;
 volatile static CyBool_t is60Hz = CyFalse;				/* Flag for frequency */
 volatile static uint8_t ROIMode = 0x01;				/* for 720p has 0x04 (ROI) 0x05 and 0x06; the other Res. has 0x04 only but is not ROI.*/
@@ -893,31 +895,31 @@ inline void ControlHandle(uint8_t CtrlID){
 								 Data0 = 1;  // 60Hz (NTSC)
 								 is60Hz = CyTrue;
 							 }
-							 CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
+							 //CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
 							 if (gpif_initialized == CyTrue)
 							 {
-								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+								 //CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 			                       switch (setRes)
 			                         {
 			                         	case 1: //1944
 			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-			                         		CyU3PThreadSleep(1000);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+			                         		CyU3PThreadSleep(500);
+			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
 			                         		break;
 			                         	case 2: //1080
 			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-			                         		CyU3PThreadSleep(1000);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+			                         		CyU3PThreadSleep(500);
+			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
 			                         		break;
 			                         	case 3: //720
 			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-			                         		CyU3PThreadSleep(1000);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+			                         		CyU3PThreadSleep(500);
+			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
 			                         		break;
 			                         	default:
 			                         		break;
 			                         }
-								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+								 //CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 							 }
 
 							 CtrlParArry[CtrlID][16] = CyTrue;
@@ -1286,7 +1288,9 @@ CyFxUVCAddHeader (
         )
 {
     /* Copy header to buffer */
+	CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
     CyU3PMemCopy (buffer_p, (uint8_t *)glUVCHeader, CY_FX_UVC_MAX_HEADER);
+	CyU3PMutexPut(&imgHdMux);
 
     /* The EOF flag needs to be set if this is the last packet for this video frame. */
     if (frameInd & CY_FX_UVC_HEADER_EOF)
@@ -1548,7 +1552,19 @@ CyFxUvcApplnDmaCallback (
     {
             if (input->buffer_p.count == CY_FX_UVC_BUF_FULL_SIZE)
             {
-                CyFxUVCAddHeader (input->buffer_p.buffer - CY_FX_UVC_MAX_HEADER, CY_FX_UVC_HEADER_FRAME);
+#if 0  //remove the still flag stting here, move into the App thread
+                if((fb == 0)&&(stiflag == 0x0F)){
+                	//CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
+                	//glUVCHeader[1] |= (1<<5);    //set still image flag
+                	//CyU3PMutexPut(&imgHdMux);
+                	stiflag = 0x03;
+                }else if(0&&(fb!=0)&&(stiflag == 0x0F)){
+                	CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
+                	glUVCHeader[1] &= ~(1<<5);    //clear still image flag
+                	CyU3PMutexPut(&imgHdMux);
+                }
+#endif
+            	CyFxUVCAddHeader (input->buffer_p.buffer - CY_FX_UVC_MAX_HEADER, CY_FX_UVC_HEADER_FRAME);
                 fb++;
             }
             else
@@ -1560,7 +1576,15 @@ CyFxUvcApplnDmaCallback (
                 //CyU3PDebugPrint (4, "((partition)buffer: Code = %d, size = %x, dmaRx %d, dmaTx %d line %d\r\n",
                 //                        status, input->buffer_p.count, prodCount, consCount, lineCount);
                 //lineCount = 0; //res test
-               hitFV = CyTrue;  //set the hitFV flag to indicate the the partial buffer has been committed.
+#if 1   //remove the still flag clearing here
+                if(stiflag == 0x0F){
+                	CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
+                	glUVCHeader[1] &= ~(1<<5);    //clear still image flag
+                	CyU3PMutexPut(&imgHdMux);
+                	stiflag = 0xAA;
+                }
+#endif
+                hitFV = CyTrue;  //set the hitFV flag to indicate the the partial buffer has been committed.
             }
 
             /* Commit the updated DMA buffer to the USB endpoint. */
@@ -2058,6 +2082,7 @@ CyFxUVCApplnInit (void)
     }
 
     /* Create a DMA Manual channel for sending the video data to the USB host. */
+    CyU3PMutexCreate(&imgHdMux, CYU3P_NO_INHERIT);// create a mutex for the image header operation.
     dmaMultiConfig.size           = CY_FX_UVC_STREAM_BUF_SIZE;
     dmaMultiConfig.count          = CY_FX_UVC_STREAM_BUF_COUNT;
     dmaMultiConfig.validSckCount  = 2;
@@ -2274,7 +2299,7 @@ UVCAppThread_Entry (
     uint8_t i = 0;
     uint32_t flag;
     uint32_t prinflag = 0;
-
+static uint8_t IMcount = 0;
 #ifdef DEBUG_PRINT_FRAME_COUNT
     uint32_t frameCnt = 0;
 #endif
@@ -2383,16 +2408,63 @@ UVCAppThread_Entry (
                 	//;//CyU3PEventSet (&glFxUVCEvent, VD_FX_I2C_CMD_EVENT, CYU3P_EVENT_OR); //each frame trigger I2C thread sending command.
                 //}
                 /* Toggle UVC header FRAME ID bit */
+            	CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
                 glUVCHeader[1] ^= CY_FX_UVC_HEADER_FRAME_ID;
-                if(stiflag){
-                	if (CyU3PEventGet (&glFxUVCEvent, VD_FX_UVC_STIL_EVENT, CYU3P_EVENT_AND_CLEAR, &flag,
-                	                    CYU3P_NO_WAIT) == CY_U3P_SUCCESS){
-                		glUVCHeader[1] |= (1<<5);    //set still image flag
-                		stiflag = CyFalse;
+            	//CyU3PMutexPut(&imgHdMux);
+                 	if ((stiflag == 0xF0) && CyU3PEventGet (&glFxUVCEvent, VD_FX_UVC_STIL_EVENT, CYU3P_EVENT_AND_CLEAR, &flag,
+                	                    CYU3P_NO_WAIT) == CY_U3P_SUCCESS){ //start full res.
+                		//glUVCHeader[1] |= (1<<5);    //set still image flag
+                       	SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                     	//CyU3PThreadSleep(100);
+                		stiflag = 0xFF;
+                		IMcount = 0;
                 	}
-                }else{
-                	glUVCHeader[1] &= ~(1<<5);    //clear still image flag
+                 	else if(stiflag==0xFF){//setting still marker in the stream head after one frame late
+
+                 		if(IMcount++ >= 0x3){
+                 		glUVCHeader[1] |= (1<<5);    //set still image flag
+                		stiflag = 0x0F;
+                		IMcount = 0;
+                		}
+                 		/*if(IMcount > 0x4){
+                			stiflag = 0x0F;
+                			IMcount = 0;
+                		}*/
+
+                }else if(stiflag==0xAA){//recovery video stream res. after one still frame set.
+                    //CyU3PThreadSleep(400);
+                	//CyU3PMutexGet(&imgHdMux, CYU3P_WAIT_FOREVER);
+                   	//glUVCHeader[1] &= ~(1<<5);    //clear still image flag
+                	//CyU3PMutexPut(&imgHdMux);
+
+                	if(IMcount++ >= 0x4)
+                	{
+                    switch (setRes)
+                     {
+                 	case 1: //1944
+                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		//CyU3PThreadSleep(100);
+                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                 		break;
+                 	case 2: //1080
+                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		//CyU3PThreadSleep(100);
+                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                 		break;
+                 	case 3: //720
+                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		//CyU3PThreadSleep(100);
+                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                 		break;
+                 	default:
+                 		break;
+                     }
+                    IMcount = 0;
+                	//glUVCHeader[1] &= ~(1<<5);    //clear still image flag
+                	stiflag = 0x0;
+                	}
                 }
+                CyU3PMutexPut(&imgHdMux);
                 /* Reset the DMA channel. */
                 apiRetStatus = CyU3PDmaMultiChannelReset (&glChHandleUVCStream);
                 if (apiRetStatus != CY_U3P_SUCCESS)
@@ -3022,18 +3094,18 @@ UVCHandleVideoStreamingRqts (
                          {
                          	case 1: //1944
                          		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-                         		CyU3PThreadSleep(1000);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                         		CyU3PThreadSleep(500);
+                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
                          		break;
                          	case 2: //1080
                          		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-                         		CyU3PThreadSleep(1000);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                         		CyU3PThreadSleep(500);
+                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
                          		break;
                          	case 3: //720
                          		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-                         		CyU3PThreadSleep(1000);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                         		CyU3PThreadSleep(500);
+                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
                          		break;
                          	default:
                          		break;
@@ -3106,6 +3178,7 @@ UVCHandleVideoStreamingRqts (
                             	glProbeStilCtrl[5] = glCommitCtrl[5];
                             	glProbeStilCtrl[6] = glCommitCtrl[6];
                             }
+                            CyU3PDebugPrint (4, "Get UVC still Prob(set) control %d %d %d\r\n", readCount, glCommitCtrl[0], glCommitCtrl[1]);
                         }
                         break;
                     default:
@@ -3160,6 +3233,8 @@ UVCHandleVideoStreamingRqts (
                             {
                                 CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
                             }
+                        	CyU3PDebugPrint (4, "UVC still commit control set %d %d %d\r\n", readCount, glCommitCtrl[0], glCommitCtrl[1]);
+
                         }
                         break;
 
@@ -3170,7 +3245,8 @@ UVCHandleVideoStreamingRqts (
                 break;
 
             case VD_FX_UVC_STILL_TRIG_CTRL:
-                switch (bRequest)
+                //CyU3PDebugPrint (4, "Get UVC still trigger control %d %d\r\n", bRequest, 0);
+            	switch (bRequest)
                 {
                     case CY_FX_USB_UVC_GET_INFO_REQ:
                         glEp0Buffer[0] = 3;                        /* GET/SET requests are supported. */
@@ -3207,9 +3283,11 @@ UVCHandleVideoStreamingRqts (
                                 CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
                             }
     #endif
-                            stiflag = CyTrue;//set still flag
+                            else{
+                            stiflag = 0xF0;//set still trigger flag
                             //stillcont = 0;
-                            CyU3PDebugPrint (4, "Get UVC still trigger control %d %d\r\n", readCount, glCommitCtrl[0]);
+                            }
+                            CyU3PDebugPrint (4, "Get UVC still trigger control %d %d %d\r\n", readCount, glCommitCtrl[0], glCommitCtrl[1]);
                         }else{
                         	CyU3PDebugPrint (4, "UVC still trigger control fail %d %d\r\n", readCount, glCommitCtrl[0]);
                         	CyU3PUsbStall (0, CyTrue, CyFalse);
@@ -3328,7 +3406,7 @@ UVCAppEP0Thread_Entry (
 
 				//CyU3PDebugPrint (4, "The interrupt event %d %d\r\n", testSnap, snapButFlag);
 
-#if 1 //for real button
+#if 0 //for real button
 				if(value&&(!snapButFlag)){
 					//CyU3PDebugPrint (4, "The interrupt event %d %d\r\n", testSnap, snapButFlag);
 					glInterStaBuffer[0] = 0x02;  //VS interface
@@ -3378,7 +3456,7 @@ UVCAppEP0Thread_Entry (
 					}
 
 					snapButFlag = 0; //snap button is not masked.
-					stiflag = CyTrue;
+					stiflag = 0xFF;
 				}
 #else			//for botton simulation
 				if(snapButFlag == 0x0f){
