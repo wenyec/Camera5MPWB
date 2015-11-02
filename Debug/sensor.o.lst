@@ -60,7 +60,7 @@
   43:../sensor.c   **** 	/* Add a 10us delay if the I2C operation that preceded this call was successful. */
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
   45:../sensor.c   **** 	{
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
   47:../sensor.c   **** 	}
   48:../sensor.c   **** 	else //if I2C operation is not success reconfig the I2C
   49:../sensor.c   **** 	{
@@ -268,9 +268,9 @@
   76              	.LVL6:
   77              	.LBB6:
   78              	.LBB7:
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
   79              		.loc 1 46 0
-  80 004c 7D0EA0E3 		mov	r0, #2000
+  80 004c FA0EA0E3 		mov	r0, #4000
   81              	.LVL7:
   82 0050 FEFFFFEB 		bl	CyU3PBusyWait
   83              	.LVL8:
@@ -321,9 +321,9 @@
  110              	.LVL10:
  111              	.LBB9:
  112              	.LBB10:
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  113              		.loc 1 46 0
- 114 0088 7D0EA0E3 		mov	r0, #2000
+ 114 0088 FA0EA0E3 		mov	r0, #4000
  115              	.LVL11:
  116 008c FEFFFFEB 		bl	CyU3PBusyWait
  117              	.LVL12:
@@ -475,9 +475,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  236              		.loc 1 44 0
  237 0150 000050E3 		cmp	r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  238              		.loc 1 46 0
- 239 0154 7D0EA003 		moveq	r0, #2000
+ 239 0154 FA0EA003 		moveq	r0, #4000
  240              	.LVL23:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  241              		.loc 1 51 0
@@ -515,9 +515,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  266              		.loc 1 44 0
  267 0188 004050E2 		subs	r4, r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  268              		.loc 1 46 0
- 269 018c 7D0EA003 		moveq	r0, #2000
+ 269 018c FA0EA003 		moveq	r0, #4000
  270              	.LVL25:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  271              		.loc 1 51 0
@@ -634,9 +634,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  366              		.loc 1 44 0
  367 0218 000054E3 		cmp	r4, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  368              		.loc 1 46 0
- 369 021c 7D0EA003 		moveq	r0, #2000
+ 369 021c FA0EA003 		moveq	r0, #4000
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  370              		.loc 1 51 0
  371 0220 FA0FA013 		movne	r0, #1000
@@ -733,9 +733,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  447              		.loc 1 44 0
  448 0294 004050E2 		subs	r4, r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  449              		.loc 1 46 0
- 450 0298 7D0EA003 		moveq	r0, #2000
+ 450 0298 FA0EA003 		moveq	r0, #4000
  451              	.LVL46:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  452              		.loc 1 51 0
@@ -876,9 +876,9 @@
  564              	.LVL62:
  565              	.LBB34:
  566              	.LBB35:
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  567              		.loc 1 46 0
- 568 0348 7D0EA0E3 		mov	r0, #2000
+ 568 0348 FA0EA0E3 		mov	r0, #4000
  569              	.LVL63:
  570 034c FEFFFFEB 		bl	CyU3PBusyWait
  571              	.LVL64:
@@ -919,9 +919,9 @@
  597              	.LVL66:
  598              	.LBB37:
  599              	.LBB38:
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  600              		.loc 1 46 0
- 601 0380 7D0EA0E3 		mov	r0, #2000
+ 601 0380 FA0EA0E3 		mov	r0, #4000
  602              	.LVL67:
  603 0384 FEFFFFEB 		bl	CyU3PBusyWait
  604              	.LVL68:
@@ -1115,9 +1115,9 @@
  737              	.LVL85:
  738              	.LBB44:
  739              	.LBB45:
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  740              		.loc 1 46 0
- 741 0464 7D0EA0E3 		mov	r0, #2000
+ 741 0464 FA0EA0E3 		mov	r0, #4000
  742              	.LVL86:
  743 0468 FEFFFFEB 		bl	CyU3PBusyWait
  744              	.LVL87:
@@ -1282,9 +1282,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  859              		.loc 1 44 0
  860 0520 004050E2 		subs	r4, r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  861              		.loc 1 46 0
- 862 0524 7D0EA003 		moveq	r0, #2000
+ 862 0524 FA0EA003 		moveq	r0, #4000
  863              	.LVL101:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  864              		.loc 1 51 0
@@ -1765,9 +1765,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  1214              		.loc 1 44 0
  1215 073c 000050E3 		cmp	r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  1216              		.loc 1 46 0
- 1217 0740 7D0EA003 		moveq	r0, #2000
+ 1217 0740 FA0EA003 		moveq	r0, #4000
  1218              	.LVL141:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  1219              		.loc 1 51 0
@@ -1807,9 +1807,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  1245              		.loc 1 44 0
  1246 0774 000050E3 		cmp	r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  1247              		.loc 1 46 0
- 1248 0778 7D0EA003 		moveq	r0, #2000
+ 1248 0778 FA0EA003 		moveq	r0, #4000
  1249              	.LVL143:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  1250              		.loc 1 51 0
@@ -1976,9 +1976,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  1373              		.loc 1 44 0
  1374 0814 000050E3 		cmp	r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  1375              		.loc 1 46 0
- 1376 0818 7D0EA003 		moveq	r0, #2000
+ 1376 0818 FA0EA003 		moveq	r0, #4000
  1377              	.LVL155:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  1378              		.loc 1 51 0
@@ -2016,9 +2016,9 @@
   44:../sensor.c   **** 	if (status == CY_U3P_SUCCESS)
  1403              		.loc 1 44 0
  1404 084c 000050E3 		cmp	r0, #0
-  46:../sensor.c   **** 		CyU3PBusyWait(2000); //change into 100us.
+  46:../sensor.c   **** 		CyU3PBusyWait(4000); //change into 100us.
  1405              		.loc 1 46 0
- 1406 0850 7D0EA003 		moveq	r0, #2000
+ 1406 0850 FA0EA003 		moveq	r0, #4000
  1407              	.LVL157:
   51:../sensor.c   **** 		CyU3PBusyWait(1000);
  1408              		.loc 1 51 0
@@ -2120,44 +2120,44 @@
  1455              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 sensor.c
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:21     .text:00000000 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:23     .text:00000000 SensorRead2B.clone.1
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:163    .text:000000e8 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:170    .text:000000f0 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:173    .text:000000f0 SensorWrite2B
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:297    .text:000001b8 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:301    .text:000001bc $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:304    .text:000001bc SensorWrite2B2
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:382    .text:00000234 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:386    .text:00000238 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:389    .text:00000238 SensorWrite
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:490    .text:000002d8 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:495    .text:000002e0 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:498    .text:000002e0 SensorRead2B
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:664    .text:000003f4 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:672    .text:00000400 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:675    .text:00000400 SensorRead2B2
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:785    .text:000004b4 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:792    .text:000004bc $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:795    .text:000004bc SensorRead
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:902    .text:00000564 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:907    .text:0000056c $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:910    .text:0000056c SensorReset
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1008   .text:00000620 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1014   .text:0000062c $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1017   .text:0000062c SensorInit
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1058   .text:00000670 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1062   .text:00000674 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1065   .text:00000674 SensorI2cBusTest
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1104   .text:000006b0 SensorGetControl
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1141   .text:000006ec $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1145   .text:000006f0 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1148   .text:000006f0 SensorSetControl
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1270   .text:000007a4 $d
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1274   .text:000007a8 $a
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1277   .text:000007a8 SensorGetIrisControl
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1310   .text:000007d0 SensorSetIrisControl
-C:\Users\wcheng\AppData\Local\Temp\ccIhZDX4.s:1423   .rodata.str1.4:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:21     .text:00000000 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:23     .text:00000000 SensorRead2B.clone.1
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:163    .text:000000e8 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:170    .text:000000f0 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:173    .text:000000f0 SensorWrite2B
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:297    .text:000001b8 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:301    .text:000001bc $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:304    .text:000001bc SensorWrite2B2
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:382    .text:00000234 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:386    .text:00000238 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:389    .text:00000238 SensorWrite
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:490    .text:000002d8 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:495    .text:000002e0 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:498    .text:000002e0 SensorRead2B
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:664    .text:000003f4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:672    .text:00000400 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:675    .text:00000400 SensorRead2B2
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:785    .text:000004b4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:792    .text:000004bc $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:795    .text:000004bc SensorRead
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:902    .text:00000564 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:907    .text:0000056c $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:910    .text:0000056c SensorReset
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1008   .text:00000620 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1014   .text:0000062c $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1017   .text:0000062c SensorInit
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1058   .text:00000670 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1062   .text:00000674 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1065   .text:00000674 SensorI2cBusTest
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1104   .text:000006b0 SensorGetControl
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1141   .text:000006ec $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1145   .text:000006f0 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1148   .text:000006f0 SensorSetControl
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1270   .text:000007a4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1274   .text:000007a8 $a
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1277   .text:000007a8 SensorGetIrisControl
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1310   .text:000007d0 SensorSetIrisControl
+C:\Users\wcheng\AppData\Local\Temp\ccDZhW2Z.s:1423   .rodata.str1.4:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
