@@ -271,6 +271,32 @@ static uint8_t CtrlParArry[32][24]={
 		 *********************************/
 		{0/*I2CCtrl*/        , 0                    ,11,    0,    0,  0xff, 0xff, 1, 0, 3, 0,   0, 0,   0,   0,                0,  CyTrue, CyFalse, 0}  // index is 0x1f
 };
+#if 0 // the new control structure
+/* the processing unit control request */
+volatile static SensorCtrl PUCBLC;
+volatile static SensorCtrl PUCBright;
+volatile static SensorCtrl PUCContrast;
+volatile static SensorCtrl PUCGain;
+volatile static SensorCtrl PUCPLFreq;
+volatile static SensorCtrl PUCHueC;
+volatile static SensorCtrl PUCSaturation;
+volatile static SensorCtrl PUCSharp;
+volatile static SensorCtrl PUCWBLC; //?
+volatile static SensorCtrl PUCDZoom;
+/* the Camera terminal control request */
+volatile static SensorCtrl CTCAutoExMode;
+volatile static SensorCtrl CTCExposureTAbs;
+volatile static SensorCtrl CTCFocusRel;
+volatile static SensorCtrl CTCIrisAbs;
+volatile static SensorCtrl CTCOPZoomAbs;
+/* the Extentsion control request */
+volatile static SensorCtrl EXT;
+volatile static SensorCtrl EXT;
+volatile static SensorCtrl EXT;
+volatile static SensorCtrl EXT;
+volatile static SensorCtrl EXT;
+
+#endif
 
 #ifndef CAM720
 	static uint8_t CamMode = 0; //0:1080p
@@ -278,6 +304,7 @@ static uint8_t CtrlParArry[32][24]={
 	static uint8_t CamMode = 1; //1:720p
 #endif
 	static uint8_t setRes = 0;  // 1:2592x1944; 2:1920x1080; 3:1280x720; 0:n/a
+	static uint8_t setstilRes = 0;  // 1:1920x1080; 2:2592x1944; 3:1280x720; 0:n/a
 
 static uint8_t ExUCtrlParArry[16][24]={
 		{0x13/*Ext1BLCRangeCtlID0 position*/ , 0x14/*size*/ , 2,    1,    0,    3,    0, 1, 0, 3, 0, 0x23, 0x37, 0x23, 0x37, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
@@ -370,17 +397,11 @@ void I2CCmdHandler(){
 		/* end of the test */
 #endif
 		if(1||(CmdRegLen == 4)){
-			/*
-			if(CmdRegLen == 2){
-				SensorRead2B2(I2CCMDArry[2]|I2C_RD_MASK, I2CCMDArry[3]|0x1, 0, I2CCMDArry[4], I2CCMDArry[9]);
-			}
-			else{
 				SensorRead2B(I2CCMDArry[2]|I2C_RD_MASK, I2CCMDArry[3]|I2C_RD_MASK, I2CCMDArry[4], I2CCMDArry[5], buf);
 				I2CCMDArry[9] = buf[0];
 				if(CmdDataLen == 2){
 					I2CCMDArry[10] = buf[1];
 				}
-			}*/
 			I2CCMDArry[11] = 0xff; //setting I2C data is available.
 		}else{//not support currently
 			CyU3PDebugPrint (4, "The I2C command length is not supported. value %d\r\n", CmdRegLen);
@@ -2414,7 +2435,7 @@ static uint8_t IMcount = 0;
                  	if ((stiflag == 0xF0) && CyU3PEventGet (&glFxUVCEvent, VD_FX_UVC_STIL_EVENT, CYU3P_EVENT_AND_CLEAR, &flag,
                 	                    CYU3P_NO_WAIT) == CY_U3P_SUCCESS){ //start full res.
                 		//glUVCHeader[1] |= (1<<5);    //set still image flag
-                       	SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                       	//SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                      	//CyU3PThreadSleep(100);
                 		stiflag = 0xFF;
                 		IMcount = 0;
@@ -2437,7 +2458,7 @@ static uint8_t IMcount = 0;
                    	//glUVCHeader[1] &= ~(1<<5);    //clear still image flag
                 	//CyU3PMutexPut(&imgHdMux);
 
-                	if(IMcount++ >= 0x4)
+                	if(IMcount++ >= 0x3)
                 	{
                     switch (setRes)
                      {
@@ -3226,13 +3247,36 @@ UVCHandleVideoStreamingRqts (
                             {
                                 SensorScaling_VGA ();
                             }
-    #endif
                             /* We can start streaming video now. */
                             apiRetStatus = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
+
                             if (apiRetStatus != CY_U3P_SUCCESS)
                             {
                                 CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
                             }
+	#endif
+                           switch (glCommitCtrl[1])
+                             {
+                             	case 3: //1944
+                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		//CyU3PThreadSleep(500);
+                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                             		break;
+                             	case 2: //1080
+                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		//CyU3PThreadSleep(500);
+                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                             		break;
+                             	case 1: //720
+                             		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		//CyU3PThreadSleep(500);
+                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                             		break;
+                             	default:
+                             		break;
+                             }
+                            setstilRes = glCommitCtrl[1];
+
                         	CyU3PDebugPrint (4, "UVC still commit control set %d %d %d\r\n", readCount, glCommitCtrl[0], glCommitCtrl[1]);
 
                         }

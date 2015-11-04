@@ -123,7 +123,28 @@
 /* GPIO 24 on FX3 is used to detect snap shot button press/release. */
 #define SENSOR_SNAPSHOT_GPIO 24
 
-
+#if 0 // controls structure
+typedef structure SensorCtrl{
+	uint8_t		Reg1;		// the command register address1
+	uint8_t		Reg2;		// the command register address2
+	uint8_t		UVCLn;		// the command length
+	uint8_t		UVCMinLo;	// the command minimum value low byte
+	uint8_t		UVCMinHi;	// the command minimum value high byte
+	uint8_t		UVCMaxLo;	// the command maximum value low byte
+	uint8_t		UVCMaxHi;	// the command maximum value high byte
+	uint8_t		UVCResLo;	// the command Res. value low byte
+	uint8_t		UVCResHi;	// the command Res. value high byte
+	uint8_t		UVCInfoLo;	// the command information value low byte
+	uint8_t		UVCInfoHi;	// the command information value high byte
+	uint8_t		UVCDefVLo;	// the command default data value low byte
+	uint8_t		UVCDefVHi;	// the command default data value high byte
+	uint8_t		UVCCurVLo;	// the command current data value low byte
+	uint8_t		UVCCurVHi;	// the command current data value high byte
+	uint8_t		DeviceAdd;	// the device address
+	uint8_t		CheckF;		// the command checked flag
+	uint8_t		AvailableF;	// the command available flag
+}
+#endif
 /* Function    : SensorWrite2B
    Description : Write two bytes of data to image sensor over I2C interface.
    Parameters  :
