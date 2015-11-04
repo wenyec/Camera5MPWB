@@ -1179,30 +1179,30 @@
  812              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 cmdqu.c
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:21     .text:00000000 $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:24     .text:00000000 creatqu
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:46     .text:00000010 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:50     .text:00000014 $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:53     .text:00000014 cmdquTest
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:362    .text:000003b4 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:368    .text:000003c0 $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:371    .text:000003c0 cmdbufCreate
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:421    .text:0000041c $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:425    .text:00000420 $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:428    .text:00000420 cmdquInit
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:516    .text:000004b0 cmdbufDestroy
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:534    .text:000004b8 cmdSet
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:618    .text:00000544 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:623    .text:0000054c $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:626    .text:0000054c statGet
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:718    .text:000005e0 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:722    .text:000005e4 $a
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:725    .text:000005e4 cmdFind
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:741    .rodata:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:745    .rodata:00000000 DelayArray
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:784    .rodata.str1.4:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:805    .bss:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\ccBF2Umd.s:809    .bss:00000000 glEp0Buffer
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:21     .text:00000000 $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:24     .text:00000000 creatqu
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:46     .text:00000010 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:50     .text:00000014 $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:53     .text:00000014 cmdquTest
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:362    .text:000003b4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:368    .text:000003c0 $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:371    .text:000003c0 cmdbufCreate
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:421    .text:0000041c $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:425    .text:00000420 $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:428    .text:00000420 cmdquInit
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:516    .text:000004b0 cmdbufDestroy
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:534    .text:000004b8 cmdSet
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:618    .text:00000544 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:623    .text:0000054c $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:626    .text:0000054c statGet
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:718    .text:000005e0 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:722    .text:000005e4 $a
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:725    .text:000005e4 cmdFind
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:741    .rodata:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:745    .rodata:00000000 DelayArray
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:784    .rodata.str1.4:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:805    .bss:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccqlVGrk.s:809    .bss:00000000 glEp0Buffer
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
