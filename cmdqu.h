@@ -59,7 +59,7 @@ typedef enum ExtCtrlID{
 	ExtNDlevCtlID8,         // Night Day level
 	ExtAexModCtlID9,        // Aex mode/agc
 	ExtExRefCtlID10,         // Ex reference level
-	ExtCtlID11,
+	ExtCtlShutlevCtlID11,    // shutter fine level (5MP b/w)
 	ExtCamMCtlID12,
 	ExtshotCtlID13,			//snap shot
 	ExtSensorParCtlID14,    //sensor parameters operation: recovery default settings; customer settings; store current settings
