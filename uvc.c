@@ -475,7 +475,8 @@ static uint8_t CTCtrlParArry[16][24]={
 		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0}  // end of the UVC CT
 };
 static uint16_t ShutValueArry[8]={200, 100, 39, 20, 10, 5, 2, 1};
-//static uint8_t ExTime[8][2]={{0x9c, 0x00}, {0x4e, 0x00}, {0x27, 0x00}, {0x14, 0x00}, {0x0a, 0x00}, {0x05, 0x00}, {0x02, 0x00}, {0x01, 0x00}};
+static uint8_t ExTime[8][2]={{0x9c, 0x00}, {0x4e, 0x00}, {0x27, 0x00}, {0x14, 0x00}, {0x0a, 0x00}, {0x05, 0x00}, {0x02, 0x00}, {0x01, 0x00}};
+static uint16_t ShutSp[16]={33333, 16667, 8333, 4000, 2000, 1000, 500, 200, 100, 10, 0}; // in microsecond.
 /*
  * WBMenuCmpArry is set for white storing balance component requests values.
  * first two bytes represent blue and last two are for red. The defaults are set to 0.
@@ -561,19 +562,67 @@ void I2CCmdHandler(){
  * input isAuto: 0: set manual; 1: set auto
  */
 inline void setIrisauto(VdRingBuf *cmdQuptr, uint8_t isAuto){
-	uint8_t dataIdx;
-	  dataIdx = 0;
+	uint8_t dataIdx = 0;
 	  CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 	  cmdSet(cmdQuptr, 20/*AFIrisMode*/, 0x27, 0x30, isAuto?0:1, dataIdx);  //set Iris Mode for AF Lens value to 0
 	  cmdSet(cmdQuptr, 21/*noAFIrisMode*/, 0x25, 0x30, isAuto?0:2, dataIdx);  //set Iris Mode value for no-AF Lens to 0
 	  CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 }
 
+
+
+inline uint8_t getShutCtrl(uint8_t Data, uint8_t* pAxMode){
+	const uint16_t LnTm = 514;   // time of a line in microsecond for full Res. (2592x1944)
+	uint16_t NumLn;
+	uint16_t fRate, shutTm;
+	uint8_t LnVal;
+	switch (Data){
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+		shutTm = ShutSp[Data-1];
+		fRate = 30;
+		NumLn = (shutTm/LnTm)*fRate;
+		if(NumLn > 1944)
+			NumLn =1944;
+		else if(NumLn < 8)
+			NumLn = 8;
+		LnVal = (uint8_t)(NumLn/8);
+		*pAxMode = 0x01;	// shutter menual
+		CyU3PDebugPrint (4, "The shutter set value %d 0x%x 0x%x 0x%x\r\n", Data, shutTm, NumLn, LnVal); // additional debug
+		break;
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+		shutTm = ShutSp[Data-1];
+		fRate = 30;
+		NumLn = (shutTm*fRate)/LnTm;
+		if(NumLn > 1944)
+			NumLn =1944;
+		else if(NumLn < 8)
+			NumLn = 8;
+		LnVal = (uint8_t)(NumLn/8);
+		*pAxMode = 0x01;	// shutter menual
+		CyU3PDebugPrint (4, "The shutter set value %d 0x%x 0x%x 0x%x\r\n", Data, shutTm, NumLn, LnVal); // additional debug
+		break;
+	case 0: //auto
+	default:
+		*pAxMode = 0x00;	// auto
+		LnVal = 1;
+		break;
+	}
+	return LnVal;
+}
+
 inline void ControlHandle(uint8_t CtrlID){
     CyU3PReturnStatus_t apiRetStatus = !CY_U3P_SUCCESS;
     VdRingBuf *cmdQuptr = &cmdQu;
     uint16_t readCount;
-    uint8_t RegAdd0, RegAdd1, Data0, Data1, Len, idx, locCtrlID;
+    uint8_t RegAdd0, RegAdd1, Data0, Data1, Len, idx, locCtrlID, AxMode;
     uint8_t devAdd;
     locCtrlID = CtrlID-EXUAOFFSET;
     if(CtrlID >= EXUAOFFSET){//the extension command over 32.
@@ -828,6 +877,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						     RegAdd1 = EXTShutter.Reg2; //ExUCtrlParArry[locCtrlID][0];
 							 devAdd = EXTShutter.DeviceAdd;
 						     EXTShutter.UVCCurVLo = Data0; //CtrlParArry[CtrlID][13]
+#if 0	// register setting directly
 						     if((EXTAexModGainlev.UVCCurVLo&0x3) != 0)
 						     {
 						    	 Data0 = (Data0 << 4) | (EXTAexModGainlev.UVCCurVLo);
@@ -841,7 +891,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						     CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x 0x%x\r\n",
 						    		 Data1, Data0, EXTAexModGainlev.UVCCurVLo, EXTShutter.UVCCurVLo);
 						     break;
-						     /*
+#else	// old fashion
 							 if(Data0 == 0){//set exposure mode auto
 								 if((CTCtrlParArry[AutoExMCtlID1][13] != 8) && (CTCtrlParArry[AutoExMCtlID1][13] != 2)){
 									 if(CTCtrlParArry[AutoExMCtlID1][13] == 1) {
@@ -867,14 +917,21 @@ inline void ControlHandle(uint8_t CtrlID){
 									 CTCtrlParArry[ExTmACtlID3][14] = ExTime[7][1];
 								 }
 							 }
-							 CtrlParArry[CtrlID][16] = CyTrue;
+							 EXTShutter.AvailableF = CyTrue; //CtrlParArry[CtrlID][16] = CyTrue;
 							 dataIdx = 0;
+							 Data1 = getShutCtrl(Data0, &AxMode); //call setting shutter control Reg. routine.
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
+							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, AxMode, dataIdx);  //First for Axmode 0
+							 if(AxMode){
+								 dataIdx++;
+								 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, 0x80, dataIdx);  //Second for Axmode 2
+								 dataIdx++;
+								 cmdSet(cmdQuptr, CtrlID, 0x12, devAdd, Data1, dataIdx);  //Third for fine shutter adjustment
+							 }
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 							 //CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x ox%x\r\n", Data1, Data0, CTCtrlParArry[ExTmACtlID3][13], CtrlParArry[CtrlID][13]);
 							 break;
-							 */
+#endif
 						 case ExtAexModCtlID9://exposure&AGC
 						     RegAdd0 = EXTAexModGainlev.Reg1; //ExUCtrlParArry[locCtrlID][0];
 						     RegAdd1 = EXTAexModGainlev.Reg2; //ExUCtrlParArry[locCtrlID][1];

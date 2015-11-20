@@ -541,7 +541,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                           /* Number of input pins in this terminal */
         0x02,                           /* Source ID : 1: connected to input terminal 2 : Connected to Proc Unit  0x02*/
         0x03,                           /* Size of controls field for this terminal : 3 bytes */
-        0xff,0xff,0x00/*7*/,// 0x04,0x86,0x00,                /* controls supported */
+        0xfd,0xff,0x00/*7*/,// 0x04,0x86,0x00,                /* controls supported */
         0x00,                           /* String desc index : Not used */
 
         /* Output Terminal Descriptor */
