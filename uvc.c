@@ -229,37 +229,37 @@ volatile static uint8_t ROIMode = 0x01;				/* for 720p has 0x04 (ROI) 0x05 and 0
 #define BLCIndex  0 // the back light compensation index
 #define CamModeIndex 28 // the index of camera mode
 static uint8_t CtrlParArry[32][24]={
-		{BLCModeReg          , BLCModeReg           , 2,    0,    0,    3,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0x15/*BrightnessReg1*/      , 0x15/*BrightnessReg0*/       , 2,    0,    0,  255,    0, 1, 0, 3, 0, 118, 0, 118, 199, I2C_EAGLESDP_ADDR/*I2C_DevAdd_C6*/,      CyTrue,  CyTrue, 0},
-		{ContrastReg         , ContrastReg          , 2,    0,    0,  255,    0, 1, 0, 3, 0, 112, 0, 112,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{MainsFreqReg        , MainsFreqReg         , 2,    0,    0,    1,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // frequency 0=50Hz(PLA); 1=60Hz(NTSC).
-		{HuectrlRegGr        , HuectrlRegBlu        , 2,    0,    0,  255,    0, 1, 0, 3, 0, 128, 0,   0,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},  //Hue control
-		{SaturationRegR      , SaturationRegB       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  50, 0,  50,   0, I2C_DevAdd_F2,      CyTrue,  CyTrue, 0},  //Saturation control
-		{SharpnessReg        , SharpnessReg         , 2,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue,  CyTrue, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{WBModeReg           , WBModeReg            , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //white balance control
-		{0                   , 0                    , 2,    0,    0,   64,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{ManuBWBReg          , ManuRWBReg           , 4,    0,    0,   64,    0, 1, 0, 3, 0,  32,56,  32,  56, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //white balance component: Red, Blue. Only manual mode
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{DigZoomReg          , DigZoomReg           , 2,    0,    0,   27,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // end of the UVC PU
-		{ShutterReg          , ShutterReg           , 2,    0,    0,   18,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // start of the extension unit (0x10)/ shutter control 0 ~ 0x12
-		{SenseUpReg          , SenseUpReg           , 2,    0,    0,    9,    0, 1, 0, 3, 0,   0, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // sense up control 0 ~ 0x09
-		{MirrModeReg         , MirrModeReg          , 2,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // mirror mode control 0 ~ 0x03
-		{NoiRedu3DModReg     , NoiRedu3DModReg      , 2,    0,    0,    1,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // 3D noise reduce mode(data0)/level(data1). 0:off 1:on. 0 ~ 0x64
-		{NoiRedu3DLevReg     , NoiRedu3DLevReg      , 1,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{DayNightModReg      , DayNightModReg       , 2,    0,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // Day night mode. 0:auto 1:day mode 2:night mode
-		{DayNightDlyReg      , DayNightDlyReg       , 2,    0,    0,   63,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // day night switch delay control. 0 ~ 0x3f second
-		{DayNightLevReg      , DayNightLevReg       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  16, 0,  16,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // day to night start level. 0 ~ 0x64
-		{NightDayLevReg      , NightDayLevReg       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  16, 0,  16,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // night to day start level. 0 ~ 0x64
-		{AExModeReg          , AExAGCReg            , 4,    0,    0,  127,    0, 1, 0, 3, 0,   0,32,   0,  32, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // AE mode setting & AGC level: 0:auto 1~18:manual; 0 ~ 0xff:level. read(auto), write(menu).
-		{AExReferleveReg     , AExReferleveReg      , 2,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // AE reference level 0 ~ 0x40
-		{0                   , 0                    , 2,    0,    0,   25,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{SensorModeReg       , SensorModeReg        , 2,    0,    0,    6,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0/*StillImg*/       , 0                    , 2,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{SeveParsReg         , SeveParsReg          , 1,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0}, //
+		{/*0*/BLCModeRegAct       , BLCModeRegAct        , 2,    0,    0,    3,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*1*/0x15/*BrightnessReg1*/      , 0x15/*BrightnessReg0*/       , 2,    0,    0,  255,    0, 1, 0, 3, 0, 118, 0, 118, 199, I2C_EAGLESDP_ADDR/*I2C_DevAdd_C6*/,      CyTrue,  CyTrue, 0},
+		{/*2*/ContrastReg         , ContrastReg          , 2,    0,    0,  255,    0, 1, 0, 3, 0, 112, 0, 112,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},
+		{/*3*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*4*/MainsFreqReg        , MainsFreqReg         , 2,    0,    0,    1,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // frequency 0=50Hz(PLA); 1=60Hz(NTSC).
+		{/*5*/HuectrlRegGr        , HuectrlRegBlu        , 2,    0,    0,  255,    0, 1, 0, 3, 0, 128, 0,   0,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},  //Hue control
+		{/*6*/SaturationRegR      , SaturationRegB       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  50, 0,  50,   0, I2C_DevAdd_F2,      CyTrue,  CyTrue, 0},  //Saturation control
+		{/*7*/SharpnessReg1       , SharpnessReg1        , 2,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue,  CyTrue, 0},
+		{/*8*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*9*/WBModeReg           , WBModeReg            , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //white balance control
+		{/*A*/0                   , 0                    , 2,    0,    0,   64,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*B*/ManuBWBReg          , ManuRWBReg           , 4,    0,    0,   64,    0, 1, 0, 3, 0,  32,56,  32,  56, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //white balance component: Red, Blue. Only manual mode
+		{/*C*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*D*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*E*/DigZoomReg          , DigZoomReg           , 2,    0,    0,   27,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*F*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // end of the UVC PU
+		{/*10*/ShutterReg          , ShutterReg           , 2,    0,    0,   18,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // start of the extension unit (0x10)/ shutter control 0 ~ 0x12
+		{/*11*/SenseUpReg          , SenseUpReg           , 2,    0,    0,    9,    0, 1, 0, 3, 0,   0, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // sense up control 0 ~ 0x09
+		{/*12*/MirrModeReg         , MirrModeReg          , 2,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // mirror mode control 0 ~ 0x03
+		{/*13*/NoiRedu3DModReg     , NoiRedu3DModReg      , 2,    0,    0,    1,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // 3D noise reduce mode(data0)/level(data1). 0:off 1:on. 0 ~ 0x64
+		{/*14*/NoiRedu3DLevReg     , NoiRedu3DLevReg      , 1,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*15*/DayNightModReg      , DayNightModReg       , 2,    0,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // Day night mode. 0:auto 1:day mode 2:night mode
+		{/*16*/DayNightDlyReg      , DayNightDlyReg       , 2,    0,    0,   63,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // day night switch delay control. 0 ~ 0x3f second
+		{/*17*/DayNightLevReg      , DayNightLevReg       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  16, 0,  16,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // day to night start level. 0 ~ 0x64
+		{/*18*/NightDayLevReg      , NightDayLevReg       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  16, 0,  16,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // night to day start level. 0 ~ 0x64
+		{/*19*/AExModeReg          , AExAGCReg            , 4,    0,    0,  127,    0, 1, 0, 3, 0,   0,32,   0,  32, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // AE mode setting & AGC level: 0:auto 1~18:manual; 0 ~ 0xff:level. read(auto), write(menu).
+		{/*1A*/AExReferleveReg     , AExReferleveReg      , 2,    0,    0,  255,    0, 1, 0, 3, 0,  0x60, 0,  0x60,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // AE reference level 0 ~ 0x40
+		{/*1B*/0                   , 0                    , 2,    0,    0,   25,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*1C*/SensorModeReg       , SensorModeReg        , 2,    0,    0,    6,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*1D*/0/*StillImg*/       , 0                    , 2,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*1E*/SeveParsReg         , SeveParsReg          , 1,    0,    0,    3,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0}, //
 		/**********************************
 		 * the I2C commands control for generic I2C module control.
 		 * the data format: wLength 10 bytes, the first part is address. the significant length is presented by first byte.
@@ -269,26 +269,87 @@ static uint8_t CtrlParArry[32][24]={
 		 * 					Total length of the request is 10 bytes.
 		 *
 		 *********************************/
-		{0/*I2CCtrl*/        , 0                    ,11,    0,    0,  0xff, 0xff, 1, 0, 3, 0,   0, 0,   0,   0,                0,  CyTrue, CyFalse, 0}  // index is 0x1f
+		{/*1F*/0/*I2CCtrl*/        , 0                    ,11,    0,    0,  0xff, 0xff, 1, 0, 3, 0,   0, 0,   0,   0,                0,  CyTrue, CyFalse, 0}  // index is 0x1f
 };
 #if 1 // the new control structure
 /* the processing unit control request */
-//volatile static SensorCtrl PUCBLC;
+//		{ 2,    0,    0,    3,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+
+volatile static SensorCtrl PUCBLC =
+		{BLCModeRegAct,		//Reg1: the command register address1
+		 BLCModeRegGain,	//Reg2: the command register address2
+		 2,					//UVCLn: the command length
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 3,					//UVCMaxLo: the command maximum value low byte
+		 0,					//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 3,					//UVCDefVLo: the command default data value low byte
+		 0,					//UVCDefVHi: the command default data value high byte
+		 3,					//UVCCurVLo: the command current data value low byte
+		 0,					//UVCCurVHi: the command current data value high byte
+		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse			//AvailableF: the command available flag
+		}; //
 //volatile static SensorCtrl PUCBright;
 //volatile static SensorCtrl PUCContrast;
 //volatile static SensorCtrl PUCGain;
 //volatile static SensorCtrl PUCPLFreq;
 //volatile static SensorCtrl PUCHueC;
 //volatile static SensorCtrl PUCSaturation;
-//volatile static SensorCtrl PUCSharp;
+volatile static SensorCtrl PUCSharp =
+		{SharpnessReg1,		//Reg1: the command register address1
+		 SharpnessReg2,		//Reg2: the command register address2
+		 2,					//UVCLn: the command length
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 8,					//UVCMaxLo: the command maximum value low byte
+		 0,					//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 0,					//UVCDefVLo: the command default data value low byte
+		 0,					//UVCDefVHi: the command default data value high byte
+		 0,					//UVCCurVLo: the command current data value low byte
+		 0,					//UVCCurVHi: the command current data value high byte
+		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse			//AvailableF: the command available flag
+		}; //sharpness, Reg1: 0-disable & 1-enable; Reg2: 0x00~0xFF.
 //volatile static SensorCtrl PUCWBLC; //?
 //volatile static SensorCtrl PUCDZoom;
+
+volatile static SensorCtrl *pPUCSenCtrl[0x10] = {
+	&PUCBLC,
+	0, //&PUCBright,
+	0, //&PUCContrast,
+	0, //&PUCGain (AGC?)
+	0, //&PUCPLFreq,
+	0, //&PUCHueC,
+	0, //&PUCSaturation,
+	&PUCSharp,
+	0, //&PUCGamGain,
+	0, //&PUCWBMd,
+	0, //UVCCtlID10,
+	0, //&PUCWBLC,
+	0, //UVCCtlID12,
+	0, //UVCCtlID13,
+	0, //&PUCDZoom,
+	0 //UVCCtlID15
+};
+
 /* the Camera terminal control request */
 //volatile static SensorCtrl CTCAutoExMode;
 //volatile static SensorCtrl CTCExposureTAbs;
 //volatile static SensorCtrl CTCFocusRel;
 //volatile static SensorCtrl CTCIrisAbs;
 //volatile static SensorCtrl CTCOPZoomAbs;
+
 /* the Extentsion control request */
 volatile static SensorCtrl EXTShutter =
 		{ShutterReg,		//Reg1: the command register address1
@@ -384,6 +445,50 @@ volatile static SensorCtrl EXTAexModGainlev =
 //volatile static SensorCtrl EXTSnapshot;
 //volatile static SensorCtrl EXTSensorPare;
 //volatile static SensorCtrl EXTI2Ccmd;
+volatile static SensorCtrl EXTBLCWinPos =
+		{BLCPosReg,			//Reg1: the command register address1
+		 BLCSizeReg,		//Reg2: the command register address2
+		 2,					//UVCLn: the command length: 1th for mode and 2nd for gain level
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 0xff,				//UVCMaxLo: the command maximum value low byte
+		 0xff,				//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 0x22,				//UVCDefVLo: the command default data value low byte
+		 0x22, 				//UVCDefVHi: the command default data value high byte
+		 0x22,				//UVCCurVLo: the command current data value low byte
+		 0x22,				//UVCCurVHi: the command current data value high byte
+		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse			//AvailableF: the command available flag
+		}; //BLC position: [7:4]:Top/bottom [3:0]:left/right; BLC size: [7:4]:height [3:0]:width.
+//{/*25*/0x11/*Ext1BLCWeightCtlID5*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+volatile static SensorCtrl EXTBLCWeight =
+		{BLCModeRegGain,			//Reg1: the command register address1
+		 BLCModeRegGain,			//Reg2: the command register address2
+		 2,					//UVCLn: the command length: 1th for mode and 2nd for gain level
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 0xff,				//UVCMaxLo: the command maximum value low byte
+		 0,					//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 1,				//UVCDefVLo: the command default data value low byte
+		 0, 				//UVCDefVHi: the command default data value high byte
+		 1,				//UVCCurVLo: the command current data value low byte
+		 0,				//UVCCurVHi: the command current data value high byte
+		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse			//AvailableF: the command available flag
+		}; //
+//volatile static SensorCtrl EXTBLCGrid;
+//{/*26*/0x17/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+
 volatile static SensorCtrl EXTShutlev =
 		{0x02/*AExModeReg2*/,		//Reg1: the command register address1
 		 0x12/*ShutterFineReg*/,			//Reg2: the command register address2
@@ -406,26 +511,34 @@ volatile static SensorCtrl EXTShutlev =
 		}; //AE mode setting & AGC level: 0:auto 1:AGC only 2:auto Shutter only 3:menual
 		   //Gain level: 0 ~ 0xff
 
-volatile static SensorCtrl *pSensorCtrl[0x20] = {
+volatile static SensorCtrl *pEXTSenCtrl[0x20] = {//Extension control
 		&EXTShutter,
-		0,//&EXTSensUp,
-		0,//&EXTMirror,
-		0,//&EXT3DnoiseReduceMode,
-		0,//&EXT3DNoiseLev,
-		0,//&EXTDayNightMode,
-		0,//&EXTDayNightdely,
-		0,//&EXTDayNightlev,
-		0,//&EXTNightDaylev,
+		0, //&EXTSensUp,
+		0, //&EXTMirror,
+		0, //&EXT3DnoiseReduceMode,
+		0, //&EXT3DNoiseLev,
+		0, //&EXTDayNightMode,
+		0, //&EXTDayNightdely,
+		0, //&EXTDayNightlev,
+		0, //&EXTNightDaylev,
 		&EXTAexModGainlev,
-		0,//&EXTExpReflev,
+		0, //&EXTExpReflev,
 		&EXTShutlev,
-		0,//&EXTCamMode,
-		0,//&EXTSnapshot,
-		0,//&EXTSensorPare,
-		0,//&EXTI2Ccmd
+		0, //&EXTCamMode,
+		0, //&EXTSnapshot,
+		0, //&EXTSensorPare,
+		0, //&EXTI2Ccmd,
+		0, //&Ext1CtlID0 = 0x20,
+		0, //&Ext1CtlID1,
+		0, //&Ext1CtlID2,
+		0, //&Ext1CtlID3,
+		&EXTBLCWinPos,   		// back light compensation range
+		&EXTBLCWeight,  	    // back light compensation weight (gain) factor
+		0, //&EXTBLCGrid,    	// back light compensation grid state
 		0
 };
-#endif
+
+#endif //end of the new control structure
 
 #ifndef CAM720
 	static uint8_t CamMode = 0; //0:1080p
@@ -436,22 +549,22 @@ volatile static SensorCtrl *pSensorCtrl[0x20] = {
 	static uint8_t setstilRes = 0;  // 1:1920x1080; 2:2592x1944; 3:1280x720; 0:n/a
 
 static uint8_t ExUCtrlParArry[16][24]={
-		{0x13/*Ext1BLCRangeCtlID0 position*/ , 0x14/*size*/ , 2,    1,    0,    3,    0, 1, 0, 3, 0, 0x23, 0x37, 0x23, 0x37, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
-		{0x11/*Ext1BLCWeightCtlID1*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
-		{0x17/*Ext1BLCGridCtlID2*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
-		{0,                                     0   , 4,    0x1,    0, 0x38, 0x01, 1, 0, 3, 0,0x4e, 0,0x4e,   0, I2C_EAGLESDP_ADDR,   CyTrue, CyFalse, 0},   //ExTmACtlID3
-		{0,                                     0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
-		{0,                                     0   , 2,    0,    0,  255,    0, 1, 0, 3, 0,   1, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
-		{0,                                     0   , 2,    0,    0,    0,    0, 0, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
-		{0,                                     0   , 2,    0,    0,   48,    0, 1, 0, 3, 0x0a,0, 0, 0xa,   0, I2C_EAGLESDP_ADDR,  CyTrue,  CyTrue, 0},  //IriACtlID7
-		{0,                                     0   , 1,    0,    0,  127,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0,                                     0   , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //
-		{0,                                     0   , 3,    0,    0,   10,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,   64,    0, 1, 0, 3, 0,  15, 17,  0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
-		{0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0}  // end of the UVC CT
+		{/*20 set Iris auto (AF Lens)*/0,               0   , 4,    0x1,    0, 0x38, 0x01, 1, 0, 3, 0,0x4e, 0,0x4e,   0, I2C_EAGLESDP_ADDR,   CyTrue, CyFalse, 0},   //
+		{/*21 set Iris auto (non AF Lens)*/0,           0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
+		{/*22 set Iris value (DC manual)*/0,            0   , 2,    0,    0,  255,    0, 1, 0, 3, 0,   1, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
+		{/*23 opt zoom*/0,                              0   , 2,    0,    0,    0,    0, 0, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
+		{/*24*/0x13/*Ext1BLCRangeCtlID4 position*/ , 0x14/*size*/ , 2,    0,    0,    0xff, 0xff, 1, 0, 3, 0, 0x22, 0x22, 0x22, 0x22, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
+		{/*25*/0x11/*Ext1BLCWeightCtlID5*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+		{/*26*/0x17/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+		{/*27*/0,                                     0   , 4,    0x1,    0, 0x38, 0x01, 1, 0, 3, 0,0x4e, 0,0x4e,   0, I2C_EAGLESDP_ADDR,   CyTrue, CyFalse, 0},   //ExTmACtlID3
+		{/*28*/0,                                     0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
+		{/*29*/0,                                     0   , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //
+		{/*2A*/0,                                     0   , 3,    0,    0,   10,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*2B*/0                   , 0                    , 2,    0,    0,   64,    0, 1, 0, 3, 0,  15, 17,  0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //
+		{/*2C*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*2D*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*2E*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
+		{/*2F*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0}  // end of the UVC CT
 };
 
 /*      RegAdd1,             RegAdd2,              length, Min1,  Min2, Max1, Max2, Res1, Res2, InfoReq1, InfoReq2, DefReq1, DefReq2,
@@ -564,8 +677,8 @@ void I2CCmdHandler(){
 inline void setIrisauto(VdRingBuf *cmdQuptr, uint8_t isAuto){
 	uint8_t dataIdx = 0;
 	  CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-	  cmdSet(cmdQuptr, 20/*AFIrisMode*/, 0x27, 0x30, isAuto?0:1, dataIdx);  //set Iris Mode for AF Lens value to 0
-	  cmdSet(cmdQuptr, 21/*noAFIrisMode*/, 0x25, 0x30, isAuto?0:2, dataIdx);  //set Iris Mode value for no-AF Lens to 0
+	  cmdSet(cmdQuptr, 0x20/*AFIrisMode*/, 0x27, 0x30, isAuto?0:1, dataIdx);  //set Iris Mode for AF Lens value to 0
+	  cmdSet(cmdQuptr, 0x21/*noAFIrisMode*/, 0x25, 0x30, isAuto?1:2, dataIdx);  //set Iris Mode value for no-AF Lens to 0
 	  CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 }
 
@@ -624,7 +737,7 @@ inline void ControlHandle(uint8_t CtrlID){
     uint16_t readCount;
     uint8_t RegAdd0, RegAdd1, Data0, Data1, Len, idx, locCtrlID, AxMode;
     uint8_t devAdd;
-    locCtrlID = CtrlID-EXUAOFFSET;
+    locCtrlID = CtrlID-EXUAOFFSET+4;
     if(CtrlID >= EXUAOFFSET){//the extension command over 32.
     	RegAdd0 = ExUCtrlParArry[locCtrlID][0];
         RegAdd1 = ExUCtrlParArry[locCtrlID][1];
@@ -662,25 +775,27 @@ inline void ControlHandle(uint8_t CtrlID){
 			 switch(CtrlID)
 			 {
 			 	 if(CtrlID >= EXUAOFFSET){
-			 	 	 case Ext1BLCRangeCtlID0:
-			 	 	 case Ext1BLCWeightCtlID1:
-			 	 	 case Ext1BLCGridCtlID2:
-						 glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
-						 glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
+			 	 	 case Ext1BLCRangeCtlID4:
+			 	 	 case Ext1BLCWeightCtlID5:
+			 	 	 case Ext1BLCGridCtlID6:
+						 //glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
+						 //glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
+						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[1];
 			 	 		 break;
 			 	 }
 			 	 case ExtShutCtlID0:
-					 glEp0Buffer[0] = pSensorCtrl[ExtShutCtlID0 - 0x10]->UVCCurVLo;
+					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
 							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = pSensorCtrl[ExtShutCtlID0 - 0x10]->UVCCurVHi;
+					 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 					 sendData = glEp0Buffer[0];
 			 		 break;
 			 	 case ExtCtlShutlevCtlID11:
-					 glEp0Buffer[0] = pSensorCtrl[ExtCtlShutlevCtlID11 - 0x10]->UVCCurVLo;
+					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
 							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = pSensorCtrl[ExtCtlShutlevCtlID11 - 0x10]->UVCCurVHi;
+					 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 					 sendData = glEp0Buffer[0];
 			 		 break;
 			 	 case ExtCamMCtlID12:
@@ -714,8 +829,8 @@ inline void ControlHandle(uint8_t CtrlID){
 			 		 }
 			 		 break;
 				 case ExtAexModCtlID9:
-					 glEp0Buffer[0] = pSensorCtrl[ExtAexModCtlID9 - 0x10]->UVCCurVLo;
-					 glEp0Buffer[2] = pSensorCtrl[ExtAexModCtlID9 - 0x10]->UVCCurVHi;
+					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
+					 glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 
 					 //glEp0Buffer[0] = CtrlParArry[CtrlID][13];//exposure mode
 					 glEp0Buffer[1] = 0;
@@ -762,6 +877,13 @@ inline void ControlHandle(uint8_t CtrlID){
 					 glEp0Buffer[3] = 0;
 					 sendData = glEp0Buffer[0];
 					 sendData1 = glEp0Buffer[2];
+					 break;
+				 case BLCCtlID0:
+				 case ShapCtlID7:
+					 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;
+							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
+					 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+					 sendData = glEp0Buffer[0];
 					 break;
 				 case SaturCtlID6:
 				 default:
@@ -877,7 +999,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						     RegAdd1 = EXTShutter.Reg2; //ExUCtrlParArry[locCtrlID][0];
 							 devAdd = EXTShutter.DeviceAdd;
 						     EXTShutter.UVCCurVLo = Data0; //CtrlParArry[CtrlID][13]
-#if 0	// register setting directly
+#if 1	// register setting directly
 						     if((EXTAexModGainlev.UVCCurVLo&0x3) != 0)
 						     {
 						    	 Data0 = (Data0 << 4) | (EXTAexModGainlev.UVCCurVLo);
@@ -1027,7 +1149,11 @@ inline void ControlHandle(uint8_t CtrlID){
 					 		 }
 					 		I2CCmdHandler();
 							 break;
-						 case Ext1BLCRangeCtlID0: //registers value BLD window enable (0x17); position (0x13); size (0x14).
+						 case Ext1BLCRangeCtlID4: //registers value BLD window enable (0x17); position (0x13); size (0x14).
+						     RegAdd0 = EXTBLCWinPos.Reg1; //ExUCtrlParArry[locCtrlID][0];
+						     RegAdd1 = EXTBLCWinPos.Reg2; //ExUCtrlParArry[locCtrlID][0];
+							 devAdd = EXTBLCWinPos.DeviceAdd;
+
 							 dataIdx = 0;
 #if 0 //seperate version
 							 getData = Data0&0xF; //get LSB H-Pos.
@@ -1059,19 +1185,25 @@ inline void ControlHandle(uint8_t CtrlID){
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 							 getData1 = Data1;
 #endif
-							 ExUCtrlParArry[locCtrlID][13] = Data0;//ext_control array;
-							 ExUCtrlParArry[locCtrlID][14] = Data1;
-							 ExUCtrlParArry[locCtrlID][16] = CyTrue;
+							 EXTBLCWinPos.UVCCurVLo = Data0; //ExUCtrlParArry[locCtrlID][13] = Data0;//ext_control array;
+							 EXTBLCWinPos.UVCCurVHi = Data1; //ExUCtrlParArry[locCtrlID][14] = Data1;
+							 EXTBLCWinPos.AvailableF = CyTrue; //ExUCtrlParArry[locCtrlID][16] = CyTrue;
 							 break;
-						 case Ext1BLCWeightCtlID1: //register value 0x11 (need check).
+						 case Ext1BLCWeightCtlID5: //register value 0x11 (need check).
+						     RegAdd0 = EXTBLCWeight.Reg1; //ExUCtrlParArry[locCtrlID][0];
+						     RegAdd1 = EXTBLCWeight.Reg2; //ExUCtrlParArry[locCtrlID][0];
+							 devAdd = EXTBLCWeight.DeviceAdd;
+
 							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set weight factor
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-							 ExUCtrlParArry[locCtrlID][13] = Data0;
-							 ExUCtrlParArry[locCtrlID][16] = CyTrue;
+							 EXTBLCWeight.UVCCurVLo = Data0;
+							 EXTBLCWeight.AvailableF = CyTrue;
+							 //ExUCtrlParArry[locCtrlID][13] = Data0;
+							 //ExUCtrlParArry[locCtrlID][16] = CyTrue;
 							 break;
-						 case Ext1BLCGridCtlID2:
+						 case Ext1BLCGridCtlID6:
 							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set grid status
@@ -1189,18 +1321,22 @@ inline void ControlHandle(uint8_t CtrlID){
 			                         	case 1: //1944
 			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
 			                         		break;
 			                         	case 2: //1080
 			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
 			                         		break;
 			                         	case 3: //720
 			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                //CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
 			                         		break;
+			                         	case 4: //VGA
+			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+			                         		CyU3PThreadSleep(500);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
 			                         	default:
 			                         		break;
 			                         }
@@ -1210,8 +1346,16 @@ inline void ControlHandle(uint8_t CtrlID){
 							 CtrlParArry[CtrlID][16] = CyTrue;
 							 break;
 					 	 case BLCCtlID0:
-							 CtrlParArry[CtrlID][13] = Data0;
-							 CtrlParArry[CtrlID][16] = CyTrue;
+						     RegAdd0 = pPUCSenCtrl[CtrlID]->Reg1; //ExUCtrlParArry[locCtrlID][0];
+						     RegAdd1 = pPUCSenCtrl[CtrlID]->Reg2; //ExUCtrlParArry[locCtrlID][1];
+						     devAdd = pPUCSenCtrl[CtrlID]->DeviceAdd;
+						     dataIdx = 0;
+
+							 //CtrlParArry[CtrlID][13] = Data0;
+							 //CtrlParArry[CtrlID][16] = CyTrue;
+							 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
+							 pPUCSenCtrl[CtrlID]->AvailableF = CyTrue;
+
 							 if(CamMode == 1) //mode 720p
 							 {
 								 if(Data0 < 3){
@@ -1221,13 +1365,33 @@ inline void ControlHandle(uint8_t CtrlID){
 									Data0 = 4; //set to default.
 					 			 }
 					 		 }
-							 CtrlParArry[CamModeIndex][13] = Data0;
+							 //CtrlParArry[CamModeIndex][13] = Data0;
 							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 
 					 		 break;
+					 	 case ShapCtlID7:
+						     RegAdd0 = pPUCSenCtrl[CtrlID]->Reg1; //ExUCtrlParArry[locCtrlID][0];
+						     RegAdd1 = pPUCSenCtrl[CtrlID]->Reg2; //ExUCtrlParArry[locCtrlID][1];
+						     devAdd = pPUCSenCtrl[CtrlID]->DeviceAdd;
+						     dataIdx = 0;
+							 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
+							 pPUCSenCtrl[CtrlID]->AvailableF = CyTrue;
+							 if(Data0 != 0){
+								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x1, dataIdx);  //First: enable sharpness.
+								 dataIdx++;
+								 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //Second: set enhancement value.
+								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+							 }else{
+								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x0, dataIdx);  //First: disable sharpness.
+								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+
+							 }
+							 break;
 						 default:
 							 dataIdx = 0;
 
@@ -1444,7 +1608,7 @@ inline void CTControlHandle(uint8_t CtrlID){
 					  {
 							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-							 cmdSet(cmdQuptr, 22, RegAdd0, devAdd, Data0, dataIdx);  //First
+							 cmdSet(cmdQuptr, 0x22, RegAdd0, devAdd, Data0, dataIdx);  //First
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 							 //CyU3PEventSet (&glFxUVCEvent, VD_FX_I2C_CMD_EVENT, CYU3P_EVENT_OR);//set event of the command available.
 
@@ -1465,11 +1629,11 @@ inline void CTControlHandle(uint8_t CtrlID){
 					  dataIdx = 0;
 					  CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 					  if(getData == 1)
-						  cmdSet(cmdQuptr, 23, RegAdd0, devAdd, TELEDATA, dataIdx);  //telephoto direction
+						  cmdSet(cmdQuptr, 0x23, RegAdd0, devAdd, TELEDATA, dataIdx);  //telephoto direction
 					  else if(getData == 0xff)
-						  cmdSet(cmdQuptr, 23, RegAdd0, devAdd, WIDEDATA, dataIdx);  //wide-angle direction
+						  cmdSet(cmdQuptr, 0x23, RegAdd0, devAdd, WIDEDATA, dataIdx);  //wide-angle direction
 					  else
-						  cmdSet(cmdQuptr, 23, RegAdd0, devAdd, STOP, dataIdx);
+						  cmdSet(cmdQuptr, 0x23, RegAdd0, devAdd, STOP, dataIdx);
 					  //dataIdx++;
 					  //cmdSet(cmdQuptr, 23, RegAdd0, devAdd, STOP, dataIdx); //for temp implementation for stop zoom
 					  CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
@@ -2729,17 +2893,22 @@ static uint8_t IMcount = 0;
                  	case 1: //1944
                  		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
                  		break;
                  	case 2: //1080
                  		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
                  		break;
                  	case 3: //720
                  		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                 		break;
+                 	case 4: //VGA
+                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		//CyU3PThreadSleep(100);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
                  		break;
                  	default:
                  		break;
@@ -3258,16 +3427,16 @@ UVCHandleExtensionUnitRqts (
       		ControlHandle(ExtI2CCtlID15);
     		break;
 		case CY_FX_EXT_CONTROL_17BLC_RANGE:   //BLD range CONTROL17
-    		CtrlAdd = ExUCtrlParArry[Ext1BLCRangeCtlID0-EXUAOFFSET][0];
-      		ControlHandle(Ext1BLCRangeCtlID0);
+    		CtrlAdd = ExUCtrlParArry[Ext1BLCRangeCtlID4-EXUAOFFSET][0];
+      		ControlHandle(Ext1BLCRangeCtlID4);
     		break;
 		case CY_FX_EXT_CONTROL_18BLC_POSITION:   //BLD gain CONTROL18
-    		CtrlAdd = ExUCtrlParArry[Ext1BLCWeightCtlID1-EXUAOFFSET][0];
-      		ControlHandle(Ext1BLCWeightCtlID1);
+    		CtrlAdd = ExUCtrlParArry[Ext1BLCWeightCtlID5-EXUAOFFSET][0];
+      		ControlHandle(Ext1BLCWeightCtlID5);
     		break;
 		case CY_FX_EXT_CONTROL_18BLC_GRID:   //BLD gain CONTROL19
-    		CtrlAdd = ExUCtrlParArry[Ext1BLCGridCtlID2-EXUAOFFSET][0];
-      		ControlHandle(Ext1BLCGridCtlID2);
+    		CtrlAdd = ExUCtrlParArry[Ext1BLCGridCtlID6-EXUAOFFSET][0];
+      		ControlHandle(Ext1BLCGridCtlID6);
     		break;
    	default:
     		/* No requests supported as of now. Just stall EP0 to fail the request. */
@@ -3386,22 +3555,29 @@ UVCHandleVideoStreamingRqts (
                          	case 1: //1944
                          		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
                          		break;
                          	case 2: //1080
                          		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
                          		break;
                          	case 3: //720
                          		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                         		break;
+                         	case 4: //VGA
+                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		CyU3PThreadSleep(500);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
                          		break;
                          	default:
                          		break;
                          }
                         setRes = glCommitCtrl[3];
+                        CyU3PDebugPrint (4, "Set the video mode format setRes %d\n", setRes);
+
 #if 0
                     	if (usbSpeed == CY_U3P_SUPER_SPEED)
                         {
@@ -3527,22 +3703,27 @@ UVCHandleVideoStreamingRqts (
 	#endif
                            switch (glCommitCtrl[1])
                              {
-                             	case 3: //1944
+                             	case 4: //1944
                              		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
                              		break;
-                             	case 2: //1080
+                             	case 3: //1080
                              		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
                              		break;
-                             	case 1: //720
+                             	case 2: //720
                              		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    //CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
                              		break;
-                             	default:
+                            	case 1: //VGA
+                             		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		//CyU3PThreadSleep(500);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
+                             		break;
+                              	default:
                              		break;
                              }
                             setstilRes = glCommitCtrl[1];
@@ -3594,7 +3775,7 @@ UVCHandleVideoStreamingRqts (
                             apiRetStatus = CyU3PEventSet (&glFxUVCEvent, VD_FX_UVC_STIL_EVENT, CYU3P_EVENT_OR);
                             if (apiRetStatus != CY_U3P_SUCCESS)
                             {
-                                CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
+                                CyU3PDebugPrint (4, "Set CY_FX_UVC_STIL_EVENT failed %x\n", apiRetStatus);
                             }
     #endif
                             else{
@@ -4038,19 +4219,19 @@ void I2cAppThread_Entry(uint32_t input){
 					delaytime = ((lcCmdDes->CmdPar)+i)->DelayT;
 #if 1
 					switch(lcCmdDes->CmdID){
-						case 20:
+						case 0x20:
 							SensorSetIrisControl(regAdd, devAdd, data, I2C_AFBOARD_ADDR_WR/*boardID*/);//set Iris auto (AF Lens)
 							delaytime = 500;
 							break;
-						case 21:
+						case 0x21:
 							SensorSetIrisControl(regAdd, devAdd, data, I2C_DSPBOARD_ADDR_WR/*boardID*/);//set Iris auto (non AF Lens)
 							delaytime = 500;
 							break;
-						case 22:
+						case 0x22:
 							SensorSetIrisControl(regAdd, devAdd, data, I2C_AFBOARD_ADDR_WR/*boardID*/);//set Iris value (DC manual)
 							delaytime = 300;
 							break;
-						case 23:
+						case 0x23:
 							SensorSetIrisControl(regAdd, devAdd, data, I2C_AFBOARD_ADDR_WR/*boardID*/);//set Iris value (DC manual)
 							delaytime = 300;
 							break;

@@ -52,7 +52,8 @@
 
 /******	 Definition of feature registers for Eagle DSP board	**************************************************************/
 
-#define BLCModeReg				0x10    // off:0 blc:1 hblc:2 wdr:3
+#define BLCModeRegAct			0x10    // off:0 blc:1 hblc:2 wdr:3
+#define BLCModeRegGain			0x11	// The BLC gain assigned to the BLC window
 #define BrightnessReg0   		0x00	// brightness RegAAdd0 [7:0]. devadd 0xc6
 #define BrightnessReg1   		0x01	// brightness RegAAdd1 [1:0] bit1 is sign bit
 #define ContrastReg				0x02	// devadd 0xc6
@@ -65,7 +66,8 @@
 #define HuectrlRegBlu           0xe1    // hue regadd for blue   devadd 0xc6
 #define SaturationRegR 		    0x85	// for red devadd 0xf2
 #define SaturationRegB 		    0x86	// for blue devadd 0xf2
-#define SharpnessReg 			0x06    //
+#define SharpnessReg1 			0x06    // edge enhancement enable
+#define SharpnessReg2			0x07    // edge enhancement gain
 #define GainModeReg 			0x00	// tbd (?)
 #define WBModeReg 				0x08    // AWD mode. ATW:0 AWC_SET:1 INDOOR:2 OUTDOOR:3 MANUAL:4 PUSH_TO_WHITE:5 (for AWC_SET usage)(?)
 
@@ -93,9 +95,9 @@
 /******** OSD Menu Control ************************************************/
 #define OSDMenuReg 	     		0x40    // write only. stop(no change):0 left:1 right:2 up:3 down:4 set(OSD_pup_up/return/enter):5
 #define OSDLogoReg 	     		0x66    // vidology logo. off:0 on:1
-#define BLCGainReg				0x11	// low:0 medium:1 high:2
-#define BLCEgeSetReg    		0x13	// [7:4]:Top/bottom [3:0]:left/right
-#define BLCCenterReg			0x14    // [7:4]:height [3:0]:width
+//#define BLCGainReg				0x11	// low:0 medium:1 high:2
+#define BLCPosReg    		 	0x13	// [7:4]:Top/bottom [3:0]:left/right
+#define BLCSizeReg				0x14    // [7:4]:height [3:0]:width
 #define BLCGridReg  			0x17	// BLC grid 1:on 0:off (area view)
 #define DayNightModeReg			0x20    // auto:0 day:1 night:2
 

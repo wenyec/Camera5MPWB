@@ -443,7 +443,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0xFC,0x00,//0x0E,0x01,                      /* Total length of this and all sub-descriptors. */
         0x03,                           /* Number of interfaces */
 #else
-        0x2D,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
+        0x4F,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
         0x02,                           /* Number of interfaces */
 #endif
         0x01,                           /* Configuration number */
@@ -517,7 +517,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                           /* Source ID : 1 : Connected to input terminal */
         0x58,0x02,                      /* Digital multiplier org:0x00,0x40,*/
         0x03,                           /* Size of controls field for this terminal : 3 bytes */
-        0x11,0x05,0x00,/*0xdf,0x45,0x00,*/                 /* Brightness Contrast Saturation sharpness, BLC, gain, mains freq, wb -0x1B,0x37,0x00
+        0xd1,0x05,0x00,/*0xdf,0x45,0x00,*/                 /* Brightness Contrast Saturation sharpness, BLC, gain, mains freq, wb -0x1B,0x37,0x00
          	 	 	 	 	 	 	 	   controls supported   0x01,0x00,0x00 or 0x1B, 0x37, 0x00*/
         0x00,                           /* String desc index : Not used */
 
@@ -541,7 +541,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                           /* Number of input pins in this terminal */
         0x02,                           /* Source ID : 1: connected to input terminal 2 : Connected to Proc Unit  0x02*/
         0x03,                           /* Size of controls field for this terminal : 3 bytes */
-        0xfd,0xff,0x00/*7*/,// 0x04,0x86,0x00,                /* controls supported */
+        0xfd,0x9f,0x03/*7*/,// 0x04,0x86,0x00,                /* controls supported */
         0x00,                           /* String desc index : Not used */
 
         /* Output Terminal Descriptor */
@@ -593,7 +593,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x01,                           /* Descriptotor Subtype : Input Header */
         0x01,                           /* 1 format desciptor follows */
-        0x9B,0x00,//0x47,0x00,                      /* Total size of Class specific VS descr */
+        0xBD,0x00,//0x47,0x00,                      /* Total size of Class specific VS descr */
         CY_FX_EP_BULK_VIDEO,            /* EP address for BULK video data */
         0x00,                           /* No dynamic format change supported */
         0x04,                           /* Output terminal ID : 4 */
@@ -609,7 +609,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x04,                           /* Subtype : uncompressed format I/F */
         0x01,                           /* Format desciptor index */
-        0x03,                           /* Number of frame descriptor followed */
+        0x04,                           /* Number of frame descriptor followed */
         0x59,0x55,0x59,0x32,            /* GUID used to identify streaming-encoding format: YUY2 --> Is this correct, the order I got from Wim, next 3 lines are reversed?????????? */
         0x00,0x00,0x10,0x00,			/* From Wim: 00 00 00 10,*/
         0x80,0x00,0x00,0xAA,			/*         : 80 00 00 AA,*/
@@ -629,8 +629,8 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
         0x20, 0x0A,                     /* Width in pixel  2592(0x20, 0x0A) 1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
         0x98, 0x07,                     /* Height in pixel 1944(0x98, 0x07) 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
-        0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
-        0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0xD0,0x14,0x48,            /* Min bit rate bits/s. 2250*1150*16*15= 0x00,0xD0,0x14,0x48 ******************************************************/
+        0x00,0xD0,0x14,0x48, 		//0x00,0xD0,0x14,0x48,            /* Max bit rate bits/s.=2250*1150*16*15= 0x4814D000 ******************************************************/
         0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
         0x2A,0x2C,0x0A,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
@@ -644,8 +644,8 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
         0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
         0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
-        0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
-        0x00,0x28,0x26,0x84, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0x80,0x53,0x3B,            /* Min bit rate bits/s.=1920*1080*16*30= 0x3B538000 ******************************************************/
+        0x00,0x80,0x53,0x3B, 		//0x00,0x28,0x26,0x84,            /* Max bit rate bits/s.=2250*1150*16*15= 0x4814D000 ******************************************************/
         0x00,0xA4,0x1F,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
         0x15,0x16,0x05,0x00,            /* Default Frame Interval 30fps 0x15,0x16,0x05,0x00,*/
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
@@ -659,29 +659,45 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
         0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
         0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
-        0x00,0x40,0x70,0x31,            /* Min bit rate bits/s.=1920*1080*16*25= 0x31704000 ******************************************************/
-        0x00,0xD0,0x14,0x48, //0x00,0x80,0x53,0x3b,            /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 ******************************************************/
+        0x00,0x00,0xBC,0x34,            /* Min bit rate bits/s. 1280*720*16*60= 0x34BC0000 *****************/
+        0x00,0x00,0xBC,0x34,			//0x00,0xD0,0x14,0x48,           /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 *****/
         0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
-
         0x0A,0x8B,0x02,0x00,            /* Default Frame Interval 60fps 0x0A,0x8B,0x02,0x00 */
         0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
         0x0A,0x8B,0x02,0x00,            /* Shortest Frame Interval 60fps :0x0A,0x8B,0x02,0x00*/
 
+        /* Class specific Uncompressed VS frame descriptor 4 for VGA Res 640x480*/
+        0x1E,                           /* Descriptor size */
+        0x24,                           /* Descriptor type*/
+        0x05,                           /* Subtype: uncompressed frame I/F */
+        0x04,                           /* Frame Descriptor Index */
+        0x02,                           /* Still image capture method 1 is not supported in this descriptor, fixed frame rate */
+        0x80, 0x02,                      /* Width in pixel: 640 (0x80, 0x02) */
+        0xE0, 0x01,                      /* Height in pixel 480 (0xE0, 0x01) */
+        0x00,0x00,0x28,0x23,            /* Min bit rate bits/s.=640*4800*16*25= 0x23230000 ********/
+        0x00,0x00,0x28,0x23, 			//0x00,0x00,0x28,0x23,           /* Max bit rate bits/s.=2250*1150*16*30= 0x3b538000 *****/
+        0x00,0xC6,0x99,0x00,            /* Maximum video or still frame size in bytes(Deprecated)*/
+        0x85,0x45,0x01,0x00,            /* Default Frame Interval 120fps 0x85,0x45,0x01,0x00 */
+        0x01,                           /* Frame interval(Frame Rate) types: Only one frame interval supported */
+        0x85,0x45,0x01,0x00,            /* Shortest Frame Interval 120fps :0x85,0x45,0x01,0x00*/
+
 
 #if 1
         /* Class specific VS Still Image Frame descriptor for Method 2/3*/
-         0x12,                           /* Descriptor size */
+         0x16,                           /* Descriptor size */
          0x24,                           /* Descriptor type*/
          0x03,                           /* Subtype: still image frame I/F */
          0x00/*CY_FX_EP_BULK_IMAGE:0x87*/,            /* EP address for BULK still image */
-         0x03,                           /* Number of image size pattern */
- //three res' of still image
+         0x04,                           /* Number of image size pattern */
+ //four res' of still image
+        0x80, 0x02,                      /* Width in pixel: 640 (0x80, 0x02) */
+        0xE0, 0x01,                      /* Height in pixel 480 (0xE0, 0x01) */
         0x00, 0x05,                      /* Width in pixel: 1280 (0x00, 0x05) */
         0xd0, 0x02,                      /* Height in pixel 720 (0xd0, 0x02) */
-        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)**********************************************************************************/
-        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) **********************************************************************************/
-        0x20, 0x0A,                     /* Width in pixel  2592 (0x20, 0x0A) 1280 (0x00, 0x05)**********************************************************************************/
-        0x98, 0x07,                     /* Height in pixel 1944 (0x98, 0x07) 720 (0xd0, 0x02) **********************************************************************************/
+        0x80, 0x07,                     /* Width in pixel  1920 (0x80, 0x07) 1280 (0x00, 0x05)*/
+        0x38, 0x04,                     /* Height in pixel 1080 (0x38, 0x04) 720 (0xd0, 0x02) */
+        0x20, 0x0A,                     /* Width in pixel  2592 (0x20, 0x0A) 1280 (0x00, 0x05)*/
+        0x98, 0x07,                     /* Height in pixel 1944 (0x98, 0x07) 720 (0xd0, 0x02) */
 
         0x00,                           /* Number of compression pattern of this format */
          //0x00,                           /* The uncompression still image */
