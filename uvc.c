@@ -478,10 +478,10 @@ volatile static SensorCtrl EXTBLCWeight =
 		 0,					//UVCResHi: the command Res. value high byte
 		 3,					//UVCInfoLo: the command information value low byte
 		 0,					//UVCInfoHi: the command information value high byte
-		 1,				//UVCDefVLo: the command default data value low byte
+		 0x80,				//UVCDefVLo: the command default data value low byte
 		 0, 				//UVCDefVHi: the command default data value high byte
-		 1,				//UVCCurVLo: the command current data value low byte
-		 0,				//UVCCurVHi: the command current data value high byte
+		 0x80,				//UVCCurVLo: the command current data value low byte
+		 0,					//UVCCurVHi: the command current data value high byte
 		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
 		 CyTrue,			//CheckF: the command checked flag
 		 CyFalse			//AvailableF: the command available flag
@@ -554,7 +554,7 @@ static uint8_t ExUCtrlParArry[16][24]={
 		{/*22 set Iris value (DC manual)*/0,            0   , 2,    0,    0,  255,    0, 1, 0, 3, 0,   1, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
 		{/*23 opt zoom*/0,                              0   , 2,    0,    0,    0,    0, 0, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
 		{/*24*/0x13/*Ext1BLCRangeCtlID4 position*/ , 0x14/*size*/ , 2,    0,    0,    0xff, 0xff, 1, 0, 3, 0, 0x22, 0x22, 0x22, 0x22, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
-		{/*25*/0x11/*Ext1BLCWeightCtlID5*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+		{/*25*/0x11/*Ext1BLCWeightCtlID5*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   0x80, 0,   0x80,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
 		{/*26*/0x17/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
 		{/*27*/0,                                     0   , 4,    0x1,    0, 0x38, 0x01, 1, 0, 3, 0,0x4e, 0,0x4e,   0, I2C_EAGLESDP_ADDR,   CyTrue, CyFalse, 0},   //ExTmACtlID3
 		{/*28*/0,                                     0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
