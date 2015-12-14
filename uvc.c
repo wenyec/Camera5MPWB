@@ -231,7 +231,7 @@ volatile static uint8_t ROIMode = 0x01;				/* for 720p has 0x04 (ROI) 0x05 and 0
 static uint8_t CtrlParArry[32][24]={
 		{/*0*/BLCModeRegAct       , BLCModeRegAct        , 2,    0,    0,    3,    0, 1, 0, 3, 0,   3, 0,   3,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
 		{/*1*/0x15/*BrightnessReg1*/      , 0x15/*BrightnessReg0*/       , 2,    0,    0,  255,    0, 1, 0, 3, 0, 118, 0, 118, 199, I2C_EAGLESDP_ADDR/*I2C_DevAdd_C6*/,      CyTrue,  CyTrue, 0},
-		{/*2*/ContrastReg         , ContrastReg          , 2,    0,    0,  255,    0, 1, 0, 3, 0, 112, 0, 112,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},
+		{/*2*/0x04/*ContrastReg*/         , 0x04/*ContrastReg*/          , 2,    0,    0,  255,    0, 1, 0, 3, 0, 112, 0, 112,   0, I2C_EAGLESDP_ADDR/*I2C_DevAdd_C6*/,      CyTrue,  CyTrue, 0},
 		{/*3*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
 		{/*4*/MainsFreqReg        , MainsFreqReg         , 2,    0,    0,    1,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // frequency 0=50Hz(PLA); 1=60Hz(NTSC).
 		{/*5*/HuectrlRegGr        , HuectrlRegBlu        , 2,    0,    0,  255,    0, 1, 0, 3, 0, 128, 0,   0,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},  //Hue control
@@ -885,6 +885,13 @@ inline void ControlHandle(uint8_t CtrlID){
 					 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
 					 sendData = glEp0Buffer[0];
 					 break;
+				 case ExtExRefCtlID10:
+				 case ConsCtlID2:
+					 //glEp0Buffer[0] = CtrlParArry[ExtExRefCtlID10][13];//SensorGetControl(RegAdd0, devAdd);
+					 glEp0Buffer[0] = CtrlParArry[ConsCtlID2][13];//SensorGetControl(RegAdd0, devAdd);
+					 glEp0Buffer[1] = 0;
+					 sendData = glEp0Buffer[0];
+					 break;
 				 case SaturCtlID6:
 				 default:
 					 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
@@ -1176,7 +1183,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData1, dataIdx);  //set V-size
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 #else //combination version
-							 Data0 = Data0&0x7F; //mask window show flag bit.
+							 //Data0 = Data0&0x7F; //mask window show flag bit.
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 						     /* end test */
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set H/V-Pos
@@ -1391,6 +1398,18 @@ inline void ControlHandle(uint8_t CtrlID){
 								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 
 							 }
+							 break;
+						 case ExtExRefCtlID10:
+						 case ConsCtlID2:
+							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
+							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+
+							 CtrlParArry[ConsCtlID2][13] = Data0;
+							 CtrlParArry[ConsCtlID2][16] = CyTrue;
+							 //CtrlParArry[ExtExRefCtlID10][13] = Data0;  //it's canceled as the both is the same control in the sensor.
+							 //CtrlParArry[ExtExRefCtlID10][16] = CyTrue;
+
 							 break;
 						 default:
 							 dataIdx = 0;
