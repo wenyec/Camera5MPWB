@@ -96,8 +96,8 @@
 #define OSDMenuReg 	     		0x40    // write only. stop(no change):0 left:1 right:2 up:3 down:4 set(OSD_pup_up/return/enter):5
 #define OSDLogoReg 	     		0x66    // vidology logo. off:0 on:1
 //#define BLCGainReg				0x11	// low:0 medium:1 high:2
-#define BLCPosReg    		 	0x13	// [7:4]:Top/bottom [3:0]:left/right
-#define BLCSizeReg				0x14    // [7:4]:height [3:0]:width
+#define BLCPosReg    		 	0x14	// [7:4]:Top/bottom [3:0]:left/right
+#define BLCSizeReg				0x13    // [7:4]:height [3:0]:width
 #define BLCGridReg  			0x17	// BLC grid 1:on 0:off (area view)
 #define DayNightModeReg			0x20    // auto:0 day:1 night:2
 

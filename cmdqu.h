@@ -17,9 +17,10 @@
 #include <cyu3externcstart.h>
 
 #define  MAXCMD      64
-#define  MAXSTA      32
+#define  MAXSTA      64
 #define  MAXPAR      8
 #define  CMDQU0      0
+#define  STAQU0      1
 /* for optical zoom operation */
 #define  TELEDATA    0x04
 #define  WIDEDATA    0x08
@@ -168,7 +169,7 @@ static uint8_t glEp0Buffer[32];
 
 /******** routines for the ring buffer operation **********/
 void  cmdquTest(VdRingBuf *cmdbuf, uint8_t state);  //it's used test the cmdqu data structure.
-VdRingBuf  cmdbufCreate(uint16_t size, CyU3PMutex *muxPtr);                  //create a command buffer.
+VdRingBuf  cmdbufCreate(uint16_t size, char * name, uint8_t id, CyU3PMutex *muxPtr);                  //create a command buffer.
 void  cmdquInit(VdRingBuf *cmdqu);                    //initialize the command queue.
 CyBool_t  cmdbufDestroy(VdRingBuf *cmdqu);
 

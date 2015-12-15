@@ -236,7 +236,7 @@ static uint8_t CtrlParArry[32][24]={
 		{/*4*/MainsFreqReg        , MainsFreqReg         , 2,    0,    0,    1,    0, 1, 0, 3, 0,   1, 0,   1,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  // frequency 0=50Hz(PLA); 1=60Hz(NTSC).
 		{/*5*/HuectrlRegGr        , HuectrlRegBlu        , 2,    0,    0,  255,    0, 1, 0, 3, 0, 128, 0,   0,   0, I2C_DevAdd_C6,      CyTrue,  CyTrue, 0},  //Hue control
 		{/*6*/SaturationRegR      , SaturationRegB       , 2,    0,    0,  100,    0, 1, 0, 3, 0,  50, 0,  50,   0, I2C_DevAdd_F2,      CyTrue,  CyTrue, 0},  //Saturation control
-		{/*7*/SharpnessReg1       , SharpnessReg1        , 2,    0,    0,   64,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue,  CyTrue, 0},
+		{/*7*/SharpnessReg1       , SharpnessReg1        , 2,    0,    0,  255,    0, 1, 0, 3, 0,  32, 0,  32,   0, I2C_EAGLESDP_ADDR,  CyTrue,  CyTrue, 0},
 		{/*8*/0                   , 0                    , 2,    0,    0,  100,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
 		{/*9*/WBModeReg           , WBModeReg            , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //white balance control
 		{/*A*/0                   , 0                    , 2,    0,    0,   64,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},
@@ -457,10 +457,10 @@ volatile static SensorCtrl EXTBLCWinPos =
 		 0,					//UVCResHi: the command Res. value high byte
 		 3,					//UVCInfoLo: the command information value low byte
 		 0,					//UVCInfoHi: the command information value high byte
-		 0x22,				//UVCDefVLo: the command default data value low byte
-		 0x22, 				//UVCDefVHi: the command default data value high byte
-		 0x22,				//UVCCurVLo: the command current data value low byte
-		 0x22,				//UVCCurVHi: the command current data value high byte
+		 0x66,				//UVCDefVLo: the command default data value low byte
+		 0x66, 				//UVCDefVHi: the command default data value high byte
+		 0x66,				//UVCCurVLo: the command current data value low byte
+		 0x66,				//UVCCurVHi: the command current data value high byte
 		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
 		 CyTrue,			//CheckF: the command checked flag
 		 CyFalse			//AvailableF: the command available flag
@@ -487,7 +487,7 @@ volatile static SensorCtrl EXTBLCWeight =
 		 CyFalse			//AvailableF: the command available flag
 		}; //
 //volatile static SensorCtrl EXTBLCGrid;
-//{/*26*/0x17/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+//{/*26*/BLCModeRegAct/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
 
 volatile static SensorCtrl EXTShutlev =
 		{0x02/*AExModeReg2*/,		//Reg1: the command register address1
@@ -553,9 +553,9 @@ static uint8_t ExUCtrlParArry[16][24]={
 		{/*21 set Iris auto (non AF Lens)*/0,           0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
 		{/*22 set Iris value (DC manual)*/0,            0   , 2,    0,    0,  255,    0, 1, 0, 3, 0,   1, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
 		{/*23 opt zoom*/0,                              0   , 2,    0,    0,    0,    0, 0, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,      CyTrue,  CyTrue, 0},  //
-		{/*24*/0x13/*Ext1BLCRangeCtlID4 position*/ , 0x14/*size*/ , 2,    0,    0,    0xff, 0xff, 1, 0, 3, 0, 0x22, 0x22, 0x22, 0x22, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
+		{/*24*/0x13/*Ext1BLCRangeCtlID4 position*/ , 0x14/*size*/ , 2,    0,    0,    0xff, 0xff, 1, 0, 3, 0, 0x66, 0x66, 0x66, 0x66, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
 		{/*25*/0x11/*Ext1BLCWeightCtlID5*/         , 0   , 2,    1,    0,    3,    0, 1, 0, 3, 0,   0x80, 0,   0x80,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
-		{/*26*/0x17/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
+		{/*26*/BLCModeRegAct/*Ext1BLCGridCtlID6*/           , 0   , 1,    1,    0,    2,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue,  CyTrue, 0},
 		{/*27*/0,                                     0   , 4,    0x1,    0, 0x38, 0x01, 1, 0, 3, 0,0x4e, 0,0x4e,   0, I2C_EAGLESDP_ADDR,   CyTrue, CyFalse, 0},   //ExTmACtlID3
 		{/*28*/0,                                     0   , 1,    0,    0,    0,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,     CyTrue, CyFalse, 0},
 		{/*29*/0,                                     0   , 2,    0,    0,    5,    0, 1, 0, 3, 0,   0, 0,   0,   0, I2C_EAGLESDP_ADDR,  CyTrue, CyFalse, 0},  //
@@ -777,11 +777,18 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 if(CtrlID >= EXUAOFFSET){
 			 	 	 case Ext1BLCRangeCtlID4:
 			 	 	 case Ext1BLCWeightCtlID5:
-			 	 	 case Ext1BLCGridCtlID6:
 						 //glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
 						 //glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
 						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
 						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+						 sendData = glEp0Buffer[0];
+						 sendData1 = glEp0Buffer[1];
+			 	 		 break;
+			 	 	 case Ext1BLCGridCtlID6:
+						 glEp0Buffer[0] = ExUCtrlParArry[CtrlID][13];
+								 //pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = ExUCtrlParArry[CtrlID][14];
+								 //pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[1];
 			 	 		 break;
@@ -1212,10 +1219,16 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 						 case Ext1BLCGridCtlID6:
 							 dataIdx = 0;
+							 ExUCtrlParArry[locCtrlID][13] = Data0;
+							 if(Data0 == 1){
+								 Data0 = PUCBLC.UVCCurVLo|0x80;
+							 }else{
+								 Data0 = PUCBLC.UVCCurVLo&0x7f;
+							 }
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set grid status
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-							 ExUCtrlParArry[locCtrlID][13] = Data0;
+							 //ExUCtrlParArry[locCtrlID][13] = Data0;
 							 ExUCtrlParArry[locCtrlID][16] = CyTrue;
 							 break;
 				  	  	 case BrgtCtlID1:
@@ -1679,7 +1692,8 @@ inline void CTControlHandle(uint8_t CtrlID){
 /************** send default parameters to camera at the beginning **************/
 void CamDefSet(void) //it's not called at anywhere right now
 {
-    VdRingBuf *cmdQuptr = &cmdQu;
+    //VdRingBuf *cmdQuptr = &cmdQu;
+    VdRingBuf *statQuptr = &statQu;
     uint8_t RegAdd, devAdd, Data;
     uint8_t CtrlID, Data0, Data1;
 
@@ -1689,7 +1703,7 @@ void CamDefSet(void) //it's not called at anywhere right now
     Data0 = CtrlParArry[CtrlID][11];
     Data1 = Data0;
 
-    CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+    CyU3PMutexGet(statQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
     if(Data1&0x80){
     	Data1 = (((Data1 >> 6)&0x01)|0xC4);
     }else{
@@ -1697,10 +1711,10 @@ void CamDefSet(void) //it's not called at anywhere right now
     }
     Data0 = (Data0 << 2);
 
-	cmdSet(cmdQuptr, CtrlID, RegAdd, devAdd, Data1, First); //brightness
+	cmdSet(statQuptr, CtrlID, RegAdd, devAdd, Data1, First); //brightness
 
 	RegAdd = CtrlParArry[CtrlID][0];
-	cmdSet(cmdQuptr, CtrlID, RegAdd, devAdd, Data0, Second);
+	cmdSet(statQuptr, CtrlID, RegAdd, devAdd, Data0, Second);
 	CtrlParArry[CtrlID][13] = Data0;
 	CtrlParArry[CtrlID][14] = Data1;
 	CyU3PDebugPrint (4, "The set def data 0x%x, 0x%x.\r\n", Data1, Data0);
@@ -1709,20 +1723,21 @@ void CamDefSet(void) //it's not called at anywhere right now
     RegAdd = CtrlParArry[CtrlID][0];
     devAdd = CtrlParArry[CtrlID][15];
     Data = CtrlParArry[CtrlID][11];
-	cmdSet(cmdQuptr, CtrlID, RegAdd, devAdd, Data, First); //contrast
+	cmdSet(statQuptr, CtrlID, RegAdd, devAdd, Data, First); //contrast
 	CtrlParArry[CtrlID][13] = Data0;
+	CtrlParArry[ExtExRefCtlID10][13] = Data0;
 	CyU3PDebugPrint (4, "The set def data 0x%x, 0x%x.\r\n", Data, Data0);
 
     CtrlID = HueCtlID5;
     RegAdd = CtrlParArry[CtrlID][0];
     devAdd = CtrlParArry[CtrlID][15];
     Data = CtrlParArry[CtrlID][11];
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegGr, devAdd, (Data-GREEN_BASE), First);
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegMg, devAdd, (Data-MAGENTA_BASE), Second);
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegYel, devAdd, (Data-YELLOW_BASE), Third);
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegCy, devAdd, (Data-CYAN_BASE), Fourth);
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegRed, devAdd, (Data-RED_BASE), Fifth);
-    cmdSet(cmdQuptr, CtrlID, HuectrlRegBlu, devAdd, (Data-BLUE_BASE), Sixth);
+    cmdSet(statQuptr, CtrlID, HuectrlRegGr, devAdd, (Data-GREEN_BASE), First);
+    cmdSet(statQuptr, CtrlID, HuectrlRegMg, devAdd, (Data-MAGENTA_BASE), Second);
+    cmdSet(statQuptr, CtrlID, HuectrlRegYel, devAdd, (Data-YELLOW_BASE), Third);
+    cmdSet(statQuptr, CtrlID, HuectrlRegCy, devAdd, (Data-CYAN_BASE), Fourth);
+    cmdSet(statQuptr, CtrlID, HuectrlRegRed, devAdd, (Data-RED_BASE), Fifth);
+    cmdSet(statQuptr, CtrlID, HuectrlRegBlu, devAdd, (Data-BLUE_BASE), Sixth);
 	CtrlParArry[CtrlID][13] = Data-GREEN_BASE;
 	CyU3PDebugPrint (4, "The set def data 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x.\r\n",
 			(Data-GREEN_BASE), (Data-MAGENTA_BASE), (Data-YELLOW_BASE), (Data-CYAN_BASE), (Data-RED_BASE), (Data-BLUE_BASE));
@@ -1730,8 +1745,8 @@ void CamDefSet(void) //it's not called at anywhere right now
     CtrlID = SaturCtlID6;
     devAdd = CtrlParArry[CtrlID][15];
     Data = CtrlParArry[CtrlID][11];
-	cmdSet(cmdQuptr, CtrlID, SaturationRegR, devAdd, Data, First); //saturation
-	cmdSet(cmdQuptr, CtrlID, SaturationRegB, devAdd, Data, Second); //saturation
+	cmdSet(statQuptr, CtrlID, SaturationRegR, devAdd, Data, First); //saturation
+	cmdSet(statQuptr, CtrlID, SaturationRegB, devAdd, Data, Second); //saturation
 	CtrlParArry[CtrlID][13] = Data;
 	CyU3PDebugPrint (4, "The set def data 0x%x, 0x%x.\r\n", Data, Data0);
 
@@ -1739,11 +1754,11 @@ void CamDefSet(void) //it's not called at anywhere right now
     RegAdd = CtrlParArry[CtrlID][0];
     devAdd = CtrlParArry[CtrlID][15];
     Data = CtrlParArry[CtrlID][11];
-	cmdSet(cmdQuptr, CtrlID, RegAdd, devAdd, Data, First); //shapness
+	cmdSet(statQuptr, CtrlID, RegAdd, devAdd, Data, First); //shapness
 	CtrlParArry[CtrlID][13] = Data0;
 	CyU3PDebugPrint (4, "The set def data 0x%x, 0x%x.\r\n", Data, Data0);
 
-	CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+	CyU3PMutexPut(statQuptr->ringMux);  //release the command queue mutex
 	//CyU3PEventSet (&glFxUVCEvent, VD_FX_I2C_CMD_EVENT, CYU3P_EVENT_OR);//set event of the command available.
 	return;
 }
@@ -2752,7 +2767,7 @@ uint32_t posTick;
 CyU3PTimer I2CCmdTimer;
 
 void  I2CCmdCb(uint32_t input){
-	//CyU3PDebugPrint (4, "I2C pos-timer %d %d\r\n", posTick, input);
+	CyU3PDebugPrint (4, "I2C pos-timer %d %d\r\n", posTick, input);
 	CyU3PEventSet (&glFxUVCEvent, VD_FX_I2C_CMD_EVENT, CYU3P_EVENT_OR);
 }
 
@@ -4139,11 +4154,11 @@ static uint8_t timeDelay[64] = {
 */
 void I2cAppThread_Entry(uint32_t input){
 
-	//uint16_t count = 0, cmdCopyIdx = 0; //count1 = 0, cmdQuIdx = 0,
+	uint16_t count = 0, cmdCopyIdx = 0, count1 = 0, cmdQuIdx = 0; //
     VdRingBuf *cmdQuptr = &cmdQu;
     VdRingBuf *statQuptr = &statQu;
 	VdcmdDes  *lcCmdDes;
-	VdstateDes *lcStaDes;
+	VdcmdDes  *lcStaDes;
 	uint32_t flag = 0;
 	uint8_t  cmdFlag = 0;
 	uint8_t regAdd, /*regAdd1,*/ devAdd, data;// data1;
@@ -4158,6 +4173,13 @@ void I2cAppThread_Entry(uint32_t input){
 				lcCmdDes->CmdID, lcCmdDes,	lcCmdDes->cmdDesPrevious, lcCmdDes->cmdDesNext, cmdQuIdx);
 		lcCmdDes += 1;
 	}
+	lcCmdDes = statQuptr->startAdd;
+	for(cmdQuIdx = 0; cmdQuIdx < MAXCMD; cmdQuIdx++){
+		CyU3PDebugPrint (4, "State Queue check cmdID %d CmdDes 0x%x previous 0x%x next 0x%x Idx %d\r\n",
+				lcCmdDes->CmdID, lcCmdDes,	lcCmdDes->cmdDesPrevious, lcCmdDes->cmdDesNext, cmdQuIdx);
+		lcCmdDes += 1;
+	}
+
 #endif
 /*** create a timer for I2C commands delay option ***/
 	CyU3PTimerCreate(&I2CCmdTimer, I2CCmdCb, 11, 1000, 0, CYU3P_NO_ACTIVATE);
@@ -4197,21 +4219,41 @@ void I2cAppThread_Entry(uint32_t input){
 */
 			CyU3PMutexGet(statQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 			//CyU3PDebugPrint (4, "get I2C events (0) flag 0x%x cmdflag 0x%x\r\n", flag, cmdFlag);
-			lcStaDes = (VdstateDes*)statQuptr->readPtr;
-			if(0 && (lcStaDes->statFlag == CyTrue)){ /* for state queue it's not used right now. */
-				for(i = 0; i < lcStaDes->NumData; i++){
-					regAdd = ((lcStaDes->staPar)+i)->RegAdd;
-					devAdd = ((lcStaDes->staPar)+i)->DevAdd;
-					((lcStaDes->staPar)+i)->Data = SensorGetControl(regAdd, devAdd); //get state value from I2C bus
+			/* find an available reading I2C command in the state queue */
+			lcStaDes = (VdcmdDes*)statQuptr->readPtr;
+			//if(0 && (lcStaDes->cmdFlag == CyTrue)){ /* for state queue it's not used right now. */
+				i = 0;
+				while((lcStaDes->cmdFlag == deswait) && (i < MAXCMD)){
+					i++;
+					lcCmdDes = lcStaDes->cmdDesNext;
+					statQuptr->readPtr = lcStaDes;
+				}
+#if 1
+				if(lcStaDes->cmdFlag != deswait){
+				i = lcStaDes->curNum;
+				regAdd = ((lcStaDes->CmdPar)+i)->RegAdd;
+				devAdd = ((lcStaDes->CmdPar)+i)->DevAdd;
+				data = ((lcStaDes->CmdPar)+i)->Data;
+				//delaytime = ((lcStaDes->CmdPar)+i)->DelayT;
+
+				//for(i = 0; i < lcStaDes->NumPara; i++){
+					//regAdd = ((lcStaDes->CmdPar)+i)->RegAdd;
+					//devAdd = ((lcStaDes->CmdPar)+i)->DevAdd;
+					((lcStaDes->CmdPar)+i)->Data = SensorGetControl(regAdd, devAdd); //get state value from I2C bus
 #ifdef USB_DEBUG_PRINT
 					CyU3PDebugPrint (4, "send I2C state stateID %d cmdCopyIdx %d regAdd 0x%x devAdd 0x%x data 0x%x\r\n",
 								lcStaDes->StatID, regAdd, devAdd, data);
 #endif
-				}
-				lcStaDes->statFlag = CyFalse;
-				statQuptr->readPtr = (VdcmdDes*)lcStaDes->staDesNext; //update command queue read pointer
+				//}
+				lcStaDes->cmdFlag = CyFalse;
+				statQuptr->readPtr = (VdcmdDes*)lcStaDes->cmdDesNext; //update command queue read pointer
 				cmdFlag = 0xFF; //I2C command done
-			}
+				/* setting delay */
+				delaytime = 300;
+				CyU3PTimerModify(&I2CCmdTimer, delaytime, 0);
+				CyU3PTimerStart(&I2CCmdTimer);  //start delay timer
+			} //end of the if condition statment
+#endif
 			CyU3PMutexPut(statQuptr->ringMux);  //release the command queue mutex
 			if(cmdFlag != 0xFF){ //for during handle command
 				CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
@@ -4286,8 +4328,8 @@ void I2cAppThread_Entry(uint32_t input){
 					CyU3PTimerModify(&I2CCmdTimer, 1000, 0);
 					CyU3PTimerStart(&I2CCmdTimer);
 				}
-			}
 			CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+			}
 /*
 			CyU3PDebugPrint (4, "get I2C events (2) flag 0x%x cmdflag 0x%x desflag 0x%x lcCmdDes 0x%x\r\n",
 					flag, cmdFlag, lcCmdDes->cmdFlag, lcCmdDes);
@@ -4389,8 +4431,11 @@ CyFxApplicationDefine (
         goto fatalErrorHandler;
 
 	/****** create a ring buffer for command queue *******/
-	cmdQu = cmdbufCreate(MAXCMD, &cmdQuMux);
-	statQu = cmdbufCreate(MAXSTA, &staQuMux);
+    char *cmdName = "I2CcmdQue";
+    char *staName = "I2CstaQue";
+	cmdQu = cmdbufCreate(MAXCMD, cmdName, CMDQU0, &cmdQuMux);
+	statQu = cmdbufCreate(MAXSTA, staName, STAQU0, &staQuMux);
+	//VdRingBuf  cmdbufCreate(uint16_t size, char * name, uint8_t id, CyU3PMutex *muxPtr);
 
 	/****** initialize command descriptor ***********/
 	cmdquInit(cmdQuptr);

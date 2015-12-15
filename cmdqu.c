@@ -70,17 +70,17 @@ void creatqu(uint8_t para){
 	CyU3PDebugPrint (4, "The test cmdqu %d \r\n", para); // additional debug
 }
 
-/**** it's used test the cmdqu data structure. */
-void  cmdquTest(VdRingBuf *cmdbuf, uint8_t state){
-	uint16_t cmdQuIdx = 0;
+/**** it's used test the queue data structure. */
+void  cmdquTest(VdRingBuf *quebuf, uint8_t state){
+	uint16_t QuIdx = 0;
 	VdcmdDes *lcCmdDes;
-	CyU3PDebugPrint (4, "Command Queue %s state %d\r\n", cmdbuf->bufferName, state);
-	CyU3PDebugPrint (4, "Command Queue check queueID %d startAdd 0x%x endAdd 0x%x write 0x%x read 0x%x queueFlag %d\r\n",
-			cmdbuf->ringbufID, cmdbuf->startAdd, cmdbuf->endAdd, cmdbuf->writePtr, cmdbuf->readPtr, cmdbuf->bugFlag);
-	lcCmdDes = cmdbuf->startAdd;
-	for(cmdQuIdx = 0; cmdQuIdx < 0x10/*MAXCMD*/; cmdQuIdx++){
-		CyU3PDebugPrint (4, "Command Queue check cmdID %d CmdDes 0x%x previous 0x%x next 0x%x Idx %d cmdflag %d\r\n",
-				lcCmdDes->CmdID, lcCmdDes,	lcCmdDes->cmdDesPrevious, lcCmdDes->cmdDesNext, cmdQuIdx, lcCmdDes->cmdFlag);
+	CyU3PDebugPrint (4, "Queue %s state %d\r\n", quebuf->bufferName, state);
+	CyU3PDebugPrint (4, "Queue check queueID %d startAdd 0x%x endAdd 0x%x write 0x%x read 0x%x queueFlag %d\r\n",
+			quebuf->ringbufID, quebuf->startAdd, quebuf->endAdd, quebuf->writePtr, quebuf->readPtr, quebuf->bugFlag);
+	lcCmdDes = quebuf->startAdd;
+	for(QuIdx = 0; QuIdx < 0x10/*MAXCMD*/; QuIdx++){
+		CyU3PDebugPrint (4, "Queue check cmdID %d CmdDes 0x%x previous 0x%x next 0x%x Idx %d cmdflag %d\r\n",
+				lcCmdDes->CmdID, lcCmdDes,	lcCmdDes->cmdDesPrevious, lcCmdDes->cmdDesNext, QuIdx, lcCmdDes->cmdFlag);
 		lcCmdDes += 1;
 	}
 
@@ -88,15 +88,15 @@ void  cmdquTest(VdRingBuf *cmdbuf, uint8_t state){
 }
 
 /***** create a command buffer. *******/
-VdRingBuf  cmdbufCreate(uint16_t size, CyU3PMutex *muxPtr){
+VdRingBuf  cmdbufCreate(uint16_t size, char * name, uint8_t id, CyU3PMutex *muxPtr){
 	VdRingBuf cmdque;
 
-	cmdque.startAdd = CyU3PMemAlloc(sizeof(VdcmdDes)*(MAXCMD));    //allocate memory for command queue which can be put 256 commands
+	cmdque.startAdd = CyU3PMemAlloc(sizeof(VdcmdDes)*(size));    //allocate memory for command queue which can be put 256 commands
 	cmdque.bugFlag = CyFalse;  // set command queue unavailable.
-	cmdque.bufferName = "I2C command queue";
-	cmdque.ringbufID = CMDQU0;
-	cmdque.numUnit = MAXCMD;
-	cmdque.endAdd = cmdque.startAdd + MAXCMD;  //the read pointer is initialed one command unit behind of write pointer
+	cmdque.bufferName = name; //"I2C command queue";
+	cmdque.ringbufID = id; //CMDQU0;
+	cmdque.numUnit = size;
+	cmdque.endAdd = cmdque.startAdd + size;  //the read pointer is initialed one command unit behind of write pointer
 	//cmdque.ringMux = CyU3PMemAlloc(sizeof(CyU3PMutex));
 	cmdque.ringMux = muxPtr;
 	CyU3PMutexCreate(cmdque.ringMux, CYU3P_NO_INHERIT);
@@ -113,7 +113,7 @@ void  cmdquInit(VdRingBuf *cmdqu){
 		lcCmdDes->cmdFlag = deswait;            //initial the command unavailable
 		lcCmdDes->cmdDesNext = cmdqu->startAdd + (uint16_t)((cmdQuIdx + 1)&0x3F);
 		lcCmdDes->cmdDesPrevious = cmdqu->startAdd + (uint16_t)((cmdQuIdx - 1)&0x3F);
-		if(0/*!cmdQuIdx debug*/) 		CyU3PDebugPrint (4, "Command Queue init 0 cmdID %d CmdDes 0x%x previous 0x%x next 0x%x Idx %d cmdflag %d\r\n",
+		if(1/*!cmdQuIdx debug*/) 		CyU3PDebugPrint (4, "Command Queue init 0 cmdID %d CmdDes 0x%x previous 0x%x next 0x%x Idx %d cmdflag %d\r\n",
 				lcCmdDes->CmdID, lcCmdDes,	lcCmdDes->cmdDesPrevious, lcCmdDes->cmdDesNext, 0, lcCmdDes->cmdFlag);
 		cmdQuIdx ++;
 	}
