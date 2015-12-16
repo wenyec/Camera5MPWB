@@ -37,6 +37,7 @@
 //#define USB_DEBUG_PRINT          /* print debug message */
 //#define CAM720                     /* for 720p camera */
 //#define GPIFIIM                    /* gpif modified for 1080p */
+//#define COLOR
 
 /* UVC application thread parameters. */
 #define UVC_APP_THREAD_STACK           (0x1000) /* Stack size for the video streaming thread is 4 KB. */

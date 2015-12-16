@@ -590,6 +590,7 @@ static uint8_t CTCtrlParArry[16][24]={
 static uint16_t ShutValueArry[8]={200, 100, 39, 20, 10, 5, 2, 1};
 static uint8_t ExTime[8][2]={{0x9c, 0x00}, {0x4e, 0x00}, {0x27, 0x00}, {0x14, 0x00}, {0x0a, 0x00}, {0x05, 0x00}, {0x02, 0x00}, {0x01, 0x00}};
 static uint16_t ShutSp[16]={33333, 16667, 8333, 4000, 2000, 1000, 500, 200, 100, 10, 0}; // in microsecond.
+static uint8_t curFlag[64]={0}; //the curFlag for each controls current records available. 0: unable. the data should be read from sensor and put into the records. 1: available. the data is read from records.
 /*
  * WBMenuCmpArry is set for white storing balance component requests values.
  * first two bytes represent blue and last two are for red. The defaults are set to 0.
@@ -779,34 +780,88 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 	 case Ext1BLCWeightCtlID5:
 						 //glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
 						 //glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
-						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+			 	 		 if(curFlag[CtrlID]){
+							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+			 	 		 }else{
+			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
+			 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+			 	 			curFlag[CtrlID] = CyTrue;
+			 	 		 }
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[1];
 			 	 		 break;
 			 	 	 case Ext1BLCGridCtlID6:
-						 glEp0Buffer[0] = ExUCtrlParArry[CtrlID][13];
+						 //glEp0Buffer[0] = ExUCtrlParArry[CtrlID][13];
 								 //pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-						 glEp0Buffer[1] = ExUCtrlParArry[CtrlID][14];
+						 //glEp0Buffer[1] = ExUCtrlParArry[CtrlID][14];
 								 //pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+			 	 		 if(curFlag[CtrlID]){
+							 glEp0Buffer[0] = ExUCtrlParArry[CtrlID-0x20][13];//ext_control array;
+							 glEp0Buffer[1] = ExUCtrlParArry[CtrlID-0x20][14];
+			 	 		 }else{
+			 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
+			 	 			if(Data0&0x80)
+			 	 				glEp0Buffer[0] = 1;
+			 	 			else
+			 	 				glEp0Buffer[0] = 0;
+			 	 			ExUCtrlParArry[CtrlID-0x20][13] = glEp0Buffer[0];
+			 	 			glEp0Buffer[1] = ExUCtrlParArry[CtrlID-0x20][14];
+			 	 			curFlag[CtrlID] = CyTrue;
+			 	 		 }
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[1];
 			 	 		 break;
 			 	 }
 			 	 case ExtShutCtlID0:
-					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
+				     RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
+				     RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
+				     devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
+
+					 //glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
 							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+					 //glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 }else{
+		 	 			Data0 = 0xb0;//SensorGetControl(RegAdd0, devAdd);
+		 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;
+		 	 			Data1 = (Data0&0x70)>>4;
+		 	 			glEp0Buffer[0] = Data1;
+		 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 			//curFlag[CtrlID] = CyTrue;
+						CyU3PDebugPrint (4, "test shutter speed. 0x%x 0x%x 0x%x\r\n", glEp0Buffer[0], Data1, Data0);
+
+		 	 		 }
 					 sendData = glEp0Buffer[0];
+					 sendData1 = Data1;//glEp0Buffer[1];
+					 CyU3PDebugPrint (4, "test shutter speed2. 0x%x 0x%x 0x%x\r\n", glEp0Buffer[0], sendData, sendData1);
 			 		 break;
 			 	 case ExtCtlShutlevCtlID11:
-					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
+				     RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
+				     RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
+				     devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
+
+					 //glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
 							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+					 //glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+		 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
+		 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
 					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
 			 		 break;
 			 	 case ExtCamMCtlID12:
 					 sendData = CtrlParArry[CtrlID][13];
+
 					 if(CamMode == 1){//720p
 						if(sendData >= 3){
 							CyU3PDebugPrint (4, "back light compensation setting is not correct. %d %d\r\n", CamMode, sendData);
@@ -836,8 +891,26 @@ inline void ControlHandle(uint8_t CtrlID){
 			 		 }
 			 		 break;
 				 case ExtAexModCtlID9:
-					 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
-					 glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+				     RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
+				     RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
+				     devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
+
+					 //glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
+					 //glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			glEp0Buffer[0] = glEp0Buffer[0]&0x3; // get least two bits for Aex Mode
+		 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
+
+		 	 			glEp0Buffer[2] = SensorGetControl(RegAdd1, devAdd);
+		 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = glEp0Buffer[2];
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+					 //sendData = glEp0Buffer[0];
+					 //sendData1 = glEp0Buffer[1];
 
 					 //glEp0Buffer[0] = CtrlParArry[CtrlID][13];//exposure mode
 					 glEp0Buffer[1] = 0;
@@ -861,7 +934,15 @@ inline void ControlHandle(uint8_t CtrlID){
 					 glEp0Buffer[1] = 0;
 					 sendData = glEp0Buffer[0];
 					 */
-					 Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
+
+		 	 		 if(curFlag[CtrlID]){
+		 	 			Data0 = CtrlParArry[CtrlID][13];
+		 	 		 }else{
+		 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[CtrlID][13] = Data0;
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+					 //Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
 					  if(Data0&0x80){
 						  Data0 = ~Data0;
 					  }else{
@@ -872,8 +953,15 @@ inline void ControlHandle(uint8_t CtrlID){
 					 sendData = glEp0Buffer[0];
 			 		 break;
 				 case HueCtlID5:
-					 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//SensorGetControl(HuectrlRegRed, devAdd);
-					 glEp0Buffer[0] = glEp0Buffer[0] + GREEN_BASE;
+		 	 		 if(curFlag[CtrlID]){
+		 	 			Data0 = CtrlParArry[CtrlID][13];
+		 	 		 }else{
+		 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[CtrlID][13] = Data0;
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+
+					 glEp0Buffer[0] = Data0 + GREEN_BASE;
 					 glEp0Buffer[1] = 0;
 					 sendData = glEp0Buffer[0];
 					 break;
@@ -886,24 +974,100 @@ inline void ControlHandle(uint8_t CtrlID){
 					 sendData1 = glEp0Buffer[2];
 					 break;
 				 case BLCCtlID0:
-				 case ShapCtlID7:
-					 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;
-							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+		 	 			pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
+		 	 			glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
 					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
+					 break;
+				 case ShapCtlID7:
+					 //glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;
+							 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
+					 //glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;//ext_control array;
+						 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+		 	 			pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
+		 	 			glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
 					 break;
 				 case ExtExRefCtlID10:
 				 case ConsCtlID2:
 					 //glEp0Buffer[0] = CtrlParArry[ExtExRefCtlID10][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[0] = CtrlParArry[ConsCtlID2][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = 0;
+					 //glEp0Buffer[0] = CtrlParArry[ConsCtlID2][13];//SensorGetControl(RegAdd0, devAdd);
+					 //glEp0Buffer[1] = 0;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = CtrlParArry[ConsCtlID2][13];//ext_control array;
+						 glEp0Buffer[1] = CtrlParArry[ConsCtlID2][14];
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[ConsCtlID2][13] = glEp0Buffer[0];
+		 	 			glEp0Buffer[1] = CtrlParArry[ConsCtlID2][14];
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
 					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
+					 break;
+				 case WBTMdCtlID9:
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//ext_control array;
+						 glEp0Buffer[0] = glEp0Buffer[0] & 0x3;    // get two least Bits
+						 glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[CtrlID][13] = glEp0Buffer[0];
+		 	 			glEp0Buffer[0] = glEp0Buffer[0] & 0x3;    // get two least Bits
+		 	 			glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
+					 break;
+				 case MFreqCtlID4:
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//ext_control array;
+						 glEp0Buffer[0] = glEp0Buffer[0] & 0x80;    // get two least Bits
+						 glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[CtrlID][13] = glEp0Buffer[0];
+		 	 			glEp0Buffer[0] = glEp0Buffer[0] & 0x80;    // get two least Bits
+		 	 			glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
+					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
 					 break;
 				 case SaturCtlID6:
 				 default:
-					 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-					 glEp0Buffer[1] = 0;
+					 //glEp0Buffer[0] = CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
+					 //glEp0Buffer[1] = 0;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//ext_control array;
+						 glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+		 	 		 }else{
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			CtrlParArry[CtrlID][13] = glEp0Buffer[0];
+		 	 			glEp0Buffer[1] = CtrlParArry[CtrlID][14];
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
 					 sendData = glEp0Buffer[0];
+					 sendData1 = glEp0Buffer[1];
+
+					 //sendData = glEp0Buffer[0];
 					 break;
 			 }
 
@@ -1401,9 +1565,13 @@ inline void ControlHandle(uint8_t CtrlID){
 							 pPUCSenCtrl[CtrlID]->AvailableF = CyTrue;
 							 if(Data0 != 0){
 								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+#ifdef COLOR
+								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Second: set enhancement value.
+#else
 								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x1, dataIdx);  //First: enable sharpness.
 								 dataIdx++;
 								 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //Second: set enhancement value.
+#endif
 								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 							 }else{
 								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
@@ -1414,6 +1582,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 						 case ExtExRefCtlID10:
 						 case ConsCtlID2:
+							 dataIdx = 0;
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
@@ -4228,7 +4397,7 @@ void I2cAppThread_Entry(uint32_t input){
 					lcCmdDes = lcStaDes->cmdDesNext;
 					statQuptr->readPtr = lcStaDes;
 				}
-#if 1
+#if 0
 				if(lcStaDes->cmdFlag != deswait){
 				i = lcStaDes->curNum;
 				regAdd = ((lcStaDes->CmdPar)+i)->RegAdd;
