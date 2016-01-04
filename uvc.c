@@ -777,6 +777,18 @@ inline void ControlHandle(uint8_t CtrlID){
 			 {
 			 	 if(CtrlID >= EXUAOFFSET){
 			 	 	 case Ext1BLCRangeCtlID4:
+			 	 		 if(curFlag[CtrlID]){
+							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
+							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
+			 	 		 }else{
+			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
+			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
+			 	 			curFlag[CtrlID] = CyTrue;
+			 	 		 }
+						 sendData = glEp0Buffer[0];
+						 sendData1 = glEp0Buffer[1];
+						 break;
 			 	 	 case Ext1BLCWeightCtlID5:
 						 //glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
 						 //glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
@@ -784,7 +796,8 @@ inline void ControlHandle(uint8_t CtrlID){
 							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
 							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+			 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
+			 	 			glEp0Buffer[0] = Data0;
 			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
 			 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 			 	 			curFlag[CtrlID] = CyTrue;
@@ -826,7 +839,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
 						 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 		 	 		 }else{
-		 	 			Data0 = 0xb0;//SensorGetControl(RegAdd0, devAdd);
+		 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
 		 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;
 		 	 			Data1 = (Data0&0x70)>>4;
 		 	 			glEp0Buffer[0] = Data1;
@@ -966,9 +979,23 @@ inline void ControlHandle(uint8_t CtrlID){
 					 sendData = glEp0Buffer[0];
 					 break;
 				 case WBTLevCtlID11:
-					 glEp0Buffer[0] = WBMenuCmpArry[0];//using for blue part
+					 //glEp0Buffer[0] = WBMenuCmpArry[0];//using for blue part
+					 //glEp0Buffer[1] = 0;
+					 //glEp0Buffer[2] = WBMenuCmpArry[2];//using for red part
+					 //glEp0Buffer[3] = 0;
+		 	 		 if(curFlag[CtrlID]){
+						 glEp0Buffer[0] = WBMenuCmpArry[0];//using for blue part
+						 glEp0Buffer[2] = WBMenuCmpArry[2];//using for red part
+		 	 		 }else{
+		 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
+		 	 			Data1 = SensorGetControl(RegAdd1, devAdd);
+						glEp0Buffer[0] = Data0;
+						WBMenuCmpArry[0] = glEp0Buffer[0];//using for blue part
+						glEp0Buffer[2] = Data1;
+						WBMenuCmpArry[2]= glEp0Buffer[2];//using for red part
+		 	 			curFlag[CtrlID] = CyTrue;
+		 	 		 }
 					 glEp0Buffer[1] = 0;
-					 glEp0Buffer[2] = WBMenuCmpArry[2];//using for red part
 					 glEp0Buffer[3] = 0;
 					 sendData = glEp0Buffer[0];
 					 sendData1 = glEp0Buffer[2];
@@ -978,7 +1005,8 @@ inline void ControlHandle(uint8_t CtrlID){
 						 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;//ext_control array;
 						 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
 		 	 		 }else{
-		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			glEp0Buffer[0] = glEp0Buffer[0]&0x1;
 		 	 			pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
 		 	 			glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
 		 	 			curFlag[CtrlID] = CyTrue;
@@ -1036,18 +1064,25 @@ inline void ControlHandle(uint8_t CtrlID){
 					 sendData1 = glEp0Buffer[1];
 					 break;
 				 case MFreqCtlID4:
+
 		 	 		 if(curFlag[CtrlID]){
-						 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//ext_control array;
-						 glEp0Buffer[0] = glEp0Buffer[0] & 0x80;    // get two least Bits
+
+		 	 			 if(is60Hz)
+		 	 				 glEp0Buffer[0] = 2;//CtrlParArry[CtrlID][13];//ext_control array;
+		 	 			 else
+		 	 				 glEp0Buffer[0] = 1;
+
+						 //glEp0Buffer[0] = glEp0Buffer[0] & 0x80;    // get two least Bits
 						 glEp0Buffer[1] = CtrlParArry[CtrlID][14];
 		 	 		 }else{
-		 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+		 	 			Data0 = SensorGetControl(0x1, devAdd); //get resolution bit7 for main frequency information
+		 	 			glEp0Buffer[0] = (Data0&0x80)>>7;
+		 	 			glEp0Buffer[0]++;
 		 	 			CtrlParArry[CtrlID][13] = glEp0Buffer[0];
-		 	 			glEp0Buffer[0] = glEp0Buffer[0] & 0x80;    // get two least Bits
-		 	 			glEp0Buffer[1] = CtrlParArry[CtrlID][14];
-
+						glEp0Buffer[1] = CtrlParArry[CtrlID][14];
 		 	 			curFlag[CtrlID] = CyTrue;
 		 	 		 }
+
 					 sendData = glEp0Buffer[0];
 					 sendData1 = glEp0Buffer[1];
 					 break;
@@ -1496,7 +1531,7 @@ inline void ControlHandle(uint8_t CtrlID){
 								 Data0 = 1;  // 60Hz (NTSC)
 								 is60Hz = CyTrue;
 							 }
-							 //CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
+							 CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
 							 if (gpif_initialized == CyTrue)
 							 {
 								 //CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
@@ -4603,7 +4638,7 @@ CyFxApplicationDefine (
     char *cmdName = "I2CcmdQue";
     char *staName = "I2CstaQue";
 	cmdQu = cmdbufCreate(MAXCMD, cmdName, CMDQU0, &cmdQuMux);
-	statQu = cmdbufCreate(MAXSTA, staName, STAQU0, &staQuMux);
+	//statQu = cmdbufCreate(MAXSTA, staName, STAQU0, &staQuMux);
 	//VdRingBuf  cmdbufCreate(uint16_t size, char * name, uint8_t id, CyU3PMutex *muxPtr);
 
 	/****** initialize command descriptor ***********/
