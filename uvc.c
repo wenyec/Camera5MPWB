@@ -593,7 +593,11 @@ static uint8_t ExTime[8][2]={{0x9c, 0x00}, {0x4e, 0x00}, {0x27, 0x00}, {0x14, 0x
 static uint16_t ShutSp[16]={33333, 16667, 8333, 4000, 2000, 1000, 500, 200, 100, 10, 0}; // in microsecond.
 static uint8_t curFlag[64]={0}; //the curFlag for each controls current records available. 0: unable. the data should be read from sensor and put into the records. 1: available. the data is read from records.
 
-static uint8_t debugData[16]={0};
+static uint8_t debugData[64][2] = {{0,0}};
+static uint8_t dbgIdx = 2;
+static uint8_t value[32][2] = {{0,0}};
+static uint8_t valIdx = 1;
+
 /*
  * WBMenuCmpArry is set for white storing balance component requests values.
  * first two bytes represent blue and last two are for red. The defaults are set to 0.
@@ -629,33 +633,49 @@ void I2CCmdHandler(){
 			CyU3PDebugPrint (4, "The I2C command setting value %x %x\r\n", I2CCMDArry[9], ROIMode);
 
 	}
-	else{//for get debug data
+	else if(I2CCMDArry[2]!=0x70){//for get debug data
 		if(CmdType == 0){ //read
 		I2CCMDArry[11] = 0xf; //setting I2C data is not available.
-		if(I2CCMDArry[2] == 0){
-			I2CCMDArry[10] = debugData[0]; //number of frame
-			I2CCMDArry[9] = debugData[1];  // stream status
-		}
-		else if (I2CCMDArry[2] == 1){
-			I2CCMDArry[9] = debugData[2];  // stream status
-			I2CCMDArry[10] = debugData[3]; //abort code
-		}
-		else if(I2CCMDArry[2] == 2){
-			CyU3PReturnStatus_t apiRetStatus = !CY_U3P_SUCCESS;
-            apiRetStatus = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
+		if(I2CCMDArry[3] == 0){
+			if(I2CCMDArry[2] == 0){
+				I2CCMDArry[10] = debugData[0][0]; //number of frame
+				I2CCMDArry[9] = debugData[0][1];  // stream status
+			}
+			else if (I2CCMDArry[2] == 1){
+				I2CCMDArry[9] = debugData[1][0];  // abort code
+				I2CCMDArry[10] = dbgIdx; // freeze count
+			}
+			else if(I2CCMDArry[2] == 17){
+				CyU3PReturnStatus_t apiRetStatus = !CY_U3P_SUCCESS;
+				apiRetStatus = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
 
-            if (apiRetStatus != CY_U3P_SUCCESS)
-            {
-                CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
-            }
+				if (apiRetStatus != CY_U3P_SUCCESS)
+				{
+					CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
+				}
+
+			}
+			else {
+				I2CCMDArry[9] = debugData[I2CCMDArry[2]][0];  // bmRequest
+				I2CCMDArry[10] = debugData[I2CCMDArry[2]][1]; // bRequest
+			}
+		}else if(I2CCMDArry[3] == 1){
+			{
+				I2CCMDArry[9] = value[I2CCMDArry[2]][0];  // bmRequest
+				I2CCMDArry[10] = value[I2CCMDArry[2]][1]; // bRequest
+			}
 
 		}
+
 		I2CCMDArry[11] = 0xff;
 		//CmdType = 0xf;//end the routine
 		}else if(CmdType == 1){ //clear debug data
-			debugData[0] = 0x00;  //
-			debugData[1] = 0x00;  //
-			debugData[2] = 0x00;
+			debugData[0][0] = 0x00;  debugData[0][1] = 0x00;//
+			debugData[1][0] = 0x00;  debugData[1][1] = 0x00;//
+			debugData[15][0] = 0x00;  debugData[15][1] = 0x00;//
+			dbgIdx = 2;
+			valIdx = 1;
+			value[0][1] = valIdx;
 			//CmdType = 0xf;//end the routine
 		}
 		CmdType = 0xf;//end the routine
@@ -698,7 +718,7 @@ void I2CCmdHandler(){
 					CyU3PMutexPut(cmdQuptr->ringMux);
 				}
 				else SensorWrite2B(I2CCMDArry[2]&I2C_WR_MASK, I2CCMDArry[3]&I2C_WR_MASK, I2CCMDArry[4], I2CCMDArry[5], I2CCMDArry[9]);
-				if(I2CCMDArry[5] == 1) stream_start = CyFalse; //clear stream start flag
+				//if(I2CCMDArry[5] == 1) stream_start = CyFalse; //clear stream start flag
 			}
 		}else{//not support currently
 			CyU3PDebugPrint (4, "The I2C command length is not supported. value %d\r\n", CmdRegLen);
@@ -2073,7 +2093,7 @@ CyFxUVCApplnUSBEventCB (
         case CY_U3P_USB_EVENT_RESET:
             CyU3PDebugPrint (4, "RESET encountered...0x%x 0x%x\r\n", evtype, evdata);
             CyU3PGpifDisable (CyTrue);
-            debugData[2] = debugData[2]|0x01; //set bit0
+            debugData[1][0] = debugData[1][0]|0x01; //set bit0
             gpif_initialized = 0;
             streamingStarted = CyFalse;
             CyFxUVCApplnAbortHandler ();
@@ -2082,7 +2102,7 @@ CyFxUVCApplnUSBEventCB (
         case CY_U3P_USB_EVENT_SUSPEND:
             CyU3PDebugPrint (4, "SUSPEND encountered...0x%x 0x%x\r\n", evtype, evdata);
             CyU3PGpifDisable (CyTrue);
-            debugData[2] = debugData[2]|0x02; //set bit1
+            debugData[1][0] = debugData[1][0]|0x02; //set bit1
             gpif_initialized = 0;
             streamingStarted = CyFalse;
             CyFxUVCApplnAbortHandler ();
@@ -2091,7 +2111,7 @@ CyFxUVCApplnUSBEventCB (
         case CY_U3P_USB_EVENT_DISCONNECT:
             CyU3PDebugPrint (4, "USB disconnected...0x%x 0x%x\r\n", evtype, evdata);
             CyU3PGpifDisable (CyTrue);
-            debugData[2] = debugData[2]|0x04; //set bit2
+            debugData[1][0] = debugData[1][0]|0x04; //set bit2
             gpif_initialized = 0;
             isUsbConnected = CyFalse;
             streamingStarted = CyFalse;
@@ -2118,13 +2138,22 @@ CyFxUVCApplnUSBSetupCB (
 {
     CyBool_t uvcHandleReq = CyFalse;
     uint32_t status;
-
+    //CyU3PDebugPrint (4, "The USB setup Requests and UVC events 0x%x, 0x%x\r\n", setupdat0, setupdat1);
     /* Obtain Request Type and Request */
     bmReqType = (uint8_t)(setupdat0 & CY_FX_USB_SETUP_REQ_TYPE_MASK);
     bRequest  = (uint8_t)((setupdat0 & CY_FX_USB_SETUP_REQ_MASK) >> 8);
     wValue    = (uint16_t)((setupdat0 & CY_FX_USB_SETUP_VALUE_MASK) >> 16);
     wIndex    = (uint16_t)(setupdat1 & CY_FX_USB_SETUP_INDEX_MASK);
     wLength   = (uint16_t)((setupdat1 & CY_FX_USB_SETUP_LENGTH_MASK) >> 16);
+    CyU3PDebugPrint (4, "bmReqType = 0x%x bRequest = 0x%x wValue = 0x%x wIndex = 0x%x wLength = 0x%x isflag 0x%x\r\n",
+    		bmReqType, bRequest, wValue, wIndex, wLength, 0/*isFlag*/); /* additional debug message */
+    if(dbgIdx < 63){
+    	if(!((bmReqType == 0xa1) || (bmReqType == 0x80))){
+		debugData[dbgIdx][0] = bmReqType;
+		debugData[dbgIdx][1] = bRequest;
+		dbgIdx++;
+		debugData[63][1] = dbgIdx;}
+    }else debugData[63][1] = 0xFF; //full symbol
 
     /* Check for UVC Class Requests */
     switch (bmReqType)
@@ -2194,7 +2223,7 @@ CyFxUVCApplnUSBSetupCB (
                     /* Complete Control request handshake */
                     CyU3PUsbAckSetup ();
                     /* Indicate stop streaming to main thread */
-                    debugData[2] = debugData[2]|0x08; //set bit3
+                    debugData[1][0] = debugData[1][0]|0x08; //set bit3
                     clearFeatureRqtReceived = CyTrue;
                     CyFxUVCApplnAbortHandler ();
 
@@ -2238,7 +2267,7 @@ CyFxUVCApplnUSBSetupCB (
                         CyU3PUsbAckSetup ();
                         /* Indicate stop streaming to main thread */
                         clearFeatureRqtReceived = CyTrue;
-                        debugData[2] = debugData[2]|0x10; //set bit0
+                        debugData[1][0] = debugData[1][0]|0x10; //set bit0
                         CyFxUVCApplnAbortHandler ();
                     }
                     else
@@ -3068,8 +3097,8 @@ static uint8_t IMcount = 0;
         if (CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_AND, &flag,
                     CYU3P_NO_WAIT) == CY_U3P_SUCCESS)
         {
-        	debugData[1] = debugData[1]&0xFF;
-        	debugData[1] = debugData[1]|0x01;
+        	debugData[0][1] = debugData[0][1]&0xFF;
+        	debugData[0][1] = debugData[0][1]|0x01;
 #if 0 //test for new firmware no video bring up
         	//CyU3PDebugPrint(4,"\r\n gpif switch(2) 0x%x %d\r\n", apiRetStatus, curstate);// track the low res
         	/* Check if we have a buffer ready to go. */
@@ -3120,8 +3149,8 @@ static uint8_t IMcount = 0;
             		prinflag = 1;
             	}
             	//fbbak=fb; pbbak=pb; pbcbak=pbc;
-            	debugData[0]++;
-            	debugData[1] = debugData[1]|0x82;
+            	debugData[0][0]++;
+            	debugData[0][1] = debugData[0][1]|0x82;
             	fb=0;
             	pb=0;
             	pbc=0;
@@ -3229,8 +3258,8 @@ static uint8_t IMcount = 0;
             if (CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_ABORT_EVENT, CYU3P_EVENT_AND_CLEAR,
                         &flag, CYU3P_NO_WAIT) == CY_U3P_SUCCESS)
             {
-            	debugData[1] = debugData[1]&0x7F;
-            	debugData[1] = debugData[1]|0x04;
+            	debugData[0][1] = debugData[0][1]&0x7F;
+            	debugData[0][1] = debugData[0][1]|0x04;
             	hitFV     = CyFalse;
                 prodCount = 0;
                 consCount = 0;
@@ -3259,6 +3288,7 @@ static uint8_t IMcount = 0;
             }
             else
             {
+#if 0
                 if(stream_start == CyTrue){
                     if(CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_AND,
                     		&flag, CYU3P_NO_WAIT != CY_U3P_SUCCESS)){
@@ -3266,7 +3296,7 @@ static uint8_t IMcount = 0;
     						CyU3PThreadSleep(3000);
     						//if(stream_start == CyTrue){
     							streamingRecove = CyTrue;
-    							debugData[3]++;
+    							debugData[1][1]++;
     						//}
     						clearFeatureRqtReceived = CyFalse;
     						stream_start == CyFalse;
@@ -3274,7 +3304,7 @@ static uint8_t IMcount = 0;
                     }
 
                 }
-
+#endif
 
             	/* We are essentially idle at this point. Wait for the reception of a start streaming request. */
 
@@ -3289,8 +3319,8 @@ static uint8_t IMcount = 0;
                     CyU3PDebugPrint (4, "DMA Channel Set Transfer Failed, Error Code = %d\r\n", apiRetStatus);
                     CyFxAppErrorHandler (apiRetStatus);
                 }
-            	debugData[1] = debugData[1]&0x7F;
-            	debugData[1] = debugData[1]|0x08;
+            	debugData[0][1] = debugData[0][1]&0x7F;
+            	debugData[0][1] = debugData[0][1]|0x08;
                 /* Initialize gpif configuration and waveform descriptors */
                 if (gpif_initialized == CyFalse)
                 {
@@ -3307,7 +3337,7 @@ static uint8_t IMcount = 0;
                    	SensorSetIrisControl(0x25, 0x30, 0, I2C_DSPBOARD_ADDR_WR/*boardID*/);//set Iris auto (non AF Lens)
                     CyU3PThreadSleep(500);
 #endif
-#if 1
+#if 0
                     if(streamingRecove){
                     switch (setRes)
                     {
@@ -3341,7 +3371,7 @@ static uint8_t IMcount = 0;
                     CyFxUvcAppGpifInit ();
 
                     gpif_initialized = CyTrue;
-                    stream_start = CyTrue;
+                    //stream_start = CyTrue;
                     CyU3PThreadSleep(200);
                     
                 }
@@ -3642,7 +3672,12 @@ static void
 UVCHandleInterfaceCtrlRqts (
         void)
 {
-
+	if(valIdx < 32){
+		value[valIdx][0] = wValue>>8;
+		value[valIdx][1] = (uint8_t)wValue;
+		valIdx++;
+		value[0][1] = valIdx;
+	}
     switch (wValue)
     {
     	case CY_FX_UVC_POWER_MODE_CTRL: // shutter CONTROL1
@@ -4158,14 +4193,14 @@ UVCAppEP0Thread_Entry (
                     isUsbConnected = CyTrue;
                 }
             }
-//#ifdef DbgInfo
+#ifdef DbgInfo
             if((eventFlag & eventMask) & ~VD_FX_INT_STA_EVENT)
             CyU3PDebugPrint (4, "USB speed = %d evenflag = 0x%x bmReqType = 0x%x\r\n"
             		"bRequest = 0x%x wValue = 0x%x wIndex = 0x%x wLength = 0x%x isflag 0x%x\r\n",
             		usbSpeed, eventFlag, bmReqType, bRequest, wValue, wIndex, wLength, 0/*isFlag*/); /* additional debug message */
             //CyU3PDebugPrint (4, "fb = %d pb = %d pbc = %d pbcp = %d\r\n", fbbak, pbbak, pbcbak, pbcpbak);
             //fbbak=0;pbbak=0;pbcbak=0;pbcpbak=0;
-//#endif
+#endif
             if (eventFlag & CY_FX_UVC_VIDEO_CONTROL_REQUEST_EVENT)
             {
             	switch ((wIndex >> 8))
@@ -4500,7 +4535,7 @@ void I2cAppThread_Entry(uint32_t input){
 
 		}
 */
-		if(streamingRecove){//start stream again after the USB-pipe reset
+		if(0&&streamingRecove){//start stream again after the USB-pipe reset
 			CyU3PReturnStatus_t apiRetStatus = !CY_U3P_SUCCESS;
             apiRetStatus = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
 
