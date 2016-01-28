@@ -3099,6 +3099,7 @@ static uint8_t IMcount = 0;
         {
         	debugData[0][1] = debugData[0][1]&0xFF;
         	debugData[0][1] = debugData[0][1]|0x01;
+        	//CyU3PDebugPrint (4, "stream ready %x\n", apiRetStatus);
 #if 0 //test for new firmware no video bring up
         	//CyU3PDebugPrint(4,"\r\n gpif switch(2) 0x%x %d\r\n", apiRetStatus, curstate);// track the low res
         	/* Check if we have a buffer ready to go. */
@@ -3282,7 +3283,16 @@ static uint8_t IMcount = 0;
 
                     /* Flush the Endpoint memory */
                     CyU3PUsbFlushEp (CY_FX_EP_BULK_VIDEO);
-                }
+                }/*else{
+                    apiRetStatus = CyU3PEventSet (&glFxUVCEvent, VD_FX_UVC_CLEAR_EVENT, CYU3P_EVENT_OR);
+                	debugData[0][1] = debugData[0][1]&0x7F;
+                	debugData[0][1] = debugData[0][1]|0x10;
+                    if (apiRetStatus != CY_U3P_SUCCESS)
+                    {
+                        CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
+                    }
+                    CyU3PDebugPrint (4, "clear feature stream set %x\n", apiRetStatus);
+                }*/
 
                 clearFeatureRqtReceived = CyFalse;
             }
@@ -3307,11 +3317,19 @@ static uint8_t IMcount = 0;
 #endif
 
             	/* We are essentially idle at this point. Wait for the reception of a start streaming request. */
-
-                CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_AND, &flag, CYU3P_WAIT_FOREVER);
+            	debugData[0][1] = debugData[0][1]&0x7F;
+            	debugData[0][1] = debugData[0][1]|0x20;
+            	CyU3PDebugPrint (4, "pre wait stream set %x\n", apiRetStatus);
+            	if(CyU3PEventGet (&glFxUVCEvent, VD_FX_UVC_CLEAR_EVENT, CYU3P_EVENT_AND, &flag,
+                    CYU3P_NO_WAIT) == CY_U3P_SUCCESS){
+                    		CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
+            	}
+            	else
+            		CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_AND, &flag, CYU3P_WAIT_FOREVER);
                 //CyU3PTimerStart(&I2CCmdTimer); //start timer again.
                 //CyU3PDebugPrint (4, "start time tick  = %d\r\n", CyU3PGetTime());
                 /* Set DMA Channel transfer size, first producer socket */
+            	CyU3PDebugPrint (4, "post wait stream set %x\n", apiRetStatus);
                 apiRetStatus = CyU3PDmaMultiChannelSetXfer (&glChHandleUVCStream, 0, 0);
                 if (apiRetStatus != CY_U3P_SUCCESS)
                 {
@@ -4165,16 +4183,15 @@ UVCAppEP0Thread_Entry (
 	CyBool_t value;
 	CyBool_t *valueptr = &value;
 
+    CyU3PReturnStatus_t apiRetStatus;
 
 #ifdef USB_DEBUG_INTERFACE
-    CyU3PReturnStatus_t apiRetStatus;
     CyU3PDmaBuffer_t    dmaInfo;
 
     eventMask |= CY_FX_USB_DEBUG_CMD_EVENT;
 #endif
 
     /* for interrupt status test */
-    CyU3PReturnStatus_t apiRetStatus;
     eventMask |= VD_FX_INT_STA_EVENT;
     CyU3PDmaBuffer_t    interStabuf;
 

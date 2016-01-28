@@ -33,7 +33,7 @@
 /* #define UVC_PTZ_SUPPORT */           /* Enable if Pan, Tilt and Zoom controls are to be implemented. */
 /* #define BACKFLOW_DETECT */           /* Enable if buffer overflow conditions are to be detected. */
 #define DEBUG_PRINT_FRAME_COUNT    /* Enable UART debug prints to print the frame count every end of frame */
-//#define USB_DEBUG_INTERFACE       /* Enable custom USB interface for sensor interface debugging. */
+#define USB_DEBUG_INTERFACE       /* Enable custom USB interface for sensor interface debugging. */
 //#define USB_DEBUG_PRINT          /* print debug message */
 //#define CAM720                     /* for 720p camera */
 //#define GPIFIIM                    /* gpif modified for 1080p */
@@ -130,6 +130,8 @@
 #define VD_FX_INT_STA_EVENT						(1 << 6)
 
 #define VD_FX_UVC_STIL_EVENT					(1 << 7)
+
+#define VD_FX_UVC_CLEAR_EVENT					(1 << 8)
 
 /*
    The following constants are taken from the USB and USB Video Class (UVC) specifications.

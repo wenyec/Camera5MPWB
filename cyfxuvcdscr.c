@@ -105,7 +105,7 @@ const uint8_t CyFxUSBFSConfigDscr[] =
         0x01,                           /* Configuration number */
         0x00,                           /* COnfiguration string index */
         0x80,                           /* Config characteristics - Bus powered */
-        0x32,                           /* Max power consumption of device (in 2mA unit) : 100mA */
+        0x32                           /* Max power consumption of device (in 2mA unit) : 100mA */
     };
 
 /* Standard High Speed Configuration Descriptor */
@@ -116,7 +116,7 @@ const uint8_t CyFxUSBHSConfigDscr[] =
         0x09,                           /* Descriptor Size */
         CY_U3P_USB_CONFIG_DESCR,        /* Configuration Descriptor Type */
 #ifdef USB_DEBUG_INTERFACE
-        0xDC, 0x00//0xE4,0x00,//0xF6,0x00,                      /* Length of this descriptor and all sub descriptors */
+        0xF4, 0x00,//0xE4,0x00,//0xF6,0x00,                      /* Length of this descriptor and all sub descriptors */
         0x03,                           /* Number of interfaces */
 #else
         0xDD, 0x00,//0xDF,0x00,                      /* Length of this descriptor and all sub descriptors */
@@ -440,7 +440,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x09,                           /* Descriptor Size */
         CY_U3P_USB_CONFIG_DESCR,        /* Configuration Descriptor Type */
 #ifdef USB_DEBUG_INTERFACE
-        0xFC,0x00,//0x0E,0x01,                      /* Total length of this and all sub-descriptors. */
+        0x72,0x01,//0x0E,0x01,                      /* Total length of this and all sub-descriptors. */
         0x03,                           /* Number of interfaces */
 #else
         0x4F,0x01,//0xF1,0x00,//0xD9,0x00,//                      /* Length of this descriptor and all sub descriptors */
