@@ -3283,7 +3283,7 @@ static uint8_t IMcount = 0;
 
                     /* Flush the Endpoint memory */
                     CyU3PUsbFlushEp (CY_FX_EP_BULK_VIDEO);
-                }/*else{
+                }else{
                     apiRetStatus = CyU3PEventSet (&glFxUVCEvent, VD_FX_UVC_CLEAR_EVENT, CYU3P_EVENT_OR);
                 	debugData[0][1] = debugData[0][1]&0x7F;
                 	debugData[0][1] = debugData[0][1]|0x10;
@@ -3292,7 +3292,7 @@ static uint8_t IMcount = 0;
                         CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\n", apiRetStatus);
                     }
                     CyU3PDebugPrint (4, "clear feature stream set %x\n", apiRetStatus);
-                }*/
+                }
 
                 clearFeatureRqtReceived = CyFalse;
             }
@@ -3913,7 +3913,37 @@ UVCHandleVideoStreamingRqts (
                     }
                     break;
                 case CY_FX_USB_UVC_SET_CUR_REQ:
-                    /* The host has selected the parameters for the video stream. Check the desired
+                    /* for error cover implementation */
+                    CyU3PDebugPrint (4, "Clear feature request detected..\r\n");
+
+                    /* Disable the GPIF state machine. */
+                    CyU3PGpifDisable (CyTrue);
+                    gpif_initialized = 0;
+                    streamingStarted = CyFalse;
+
+                    /* Place the EP in NAK mode before cleaning up the pipe. */
+                    CyU3PUsbSetEpNak (CY_FX_EP_BULK_VIDEO, CyTrue);
+                    CyU3PBusyWait (100);
+
+                    /* Reset and flush the endpoint pipe. */
+                    CyU3PDmaMultiChannelReset (&glChHandleUVCStream);
+                    CyU3PUsbFlushEp (CY_FX_EP_BULK_VIDEO);
+                    CyU3PUsbSetEpNak (CY_FX_EP_BULK_VIDEO, CyFalse);
+                    CyU3PBusyWait (100);
+
+                    /* Clear the stall condition and sequence numbers. */
+                    CyU3PUsbStall (CY_FX_EP_BULK_VIDEO, CyFalse, CyTrue);
+
+                    //uvcHandleReq = CyTrue;
+                    /* Complete Control request handshake */
+                    CyU3PUsbAckSetup ();
+                    /* Indicate stop streaming to main thread */
+                    clearFeatureRqtReceived = CyTrue;
+                    //debugData[1][0] = debugData[1][0]|0x10; //set bit0
+                    CyFxUVCApplnAbortHandler ();
+                    /* end of the error cover implementation */
+
+                	/* The host has selected the parameters for the video stream. Check the desired
                        resolution settings, configure the sensor and start the video stream.
                        */
                     apiRetStatus = CyU3PUsbGetEP0Data (CY_FX_UVC_MAX_PROBE_SETTING_ALIGNED,
