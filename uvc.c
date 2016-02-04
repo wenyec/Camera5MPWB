@@ -3914,7 +3914,7 @@ UVCHandleVideoStreamingRqts (
                     break;
                 case CY_FX_USB_UVC_SET_CUR_REQ:
                     /* for error cover implementation */
-                    CyU3PDebugPrint (4, "Clear feature request detected..\r\n");
+                    CyU3PDebugPrint (4, "Clear feature request detected (fake)..\r\n");
 
                     /* Disable the GPIF state machine. */
                     CyU3PGpifDisable (CyTrue);
