@@ -3878,10 +3878,10 @@ UVCHandleVideoStreamingRqts (
                                    active data structure. */
                             	glProbeStilCtrl[1] = glCommitCtrl[1];
                             	glProbeStilCtrl[2] = glCommitCtrl[2];
-                            	glProbeStilCtrl[3] = glCommitCtrl[3];
-                            	glProbeStilCtrl[4] = glCommitCtrl[4];
-                            	glProbeStilCtrl[5] = glCommitCtrl[5];
-                            	glProbeStilCtrl[6] = glCommitCtrl[6];
+                            	//glProbeStilCtrl[3] = glCommitCtrl[3];
+                            	//glProbeStilCtrl[4] = glCommitCtrl[4];
+                            	//glProbeStilCtrl[5] = glCommitCtrl[5];
+                            	//glProbeStilCtrl[6] = glCommitCtrl[6];
                             }
                             CyU3PDebugPrint (4, "Get UVC still Prob(set) control %d %d %d\r\n", readCount, glCommitCtrl[0], glCommitCtrl[1]);
                         }
