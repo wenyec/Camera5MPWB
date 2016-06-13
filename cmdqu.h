@@ -75,14 +75,14 @@ typedef enum ExtCtrlID1{
 	Ext1BLCRangeCtlID4,   // back light compensation range
 	Ext1BLCWeightCtlID5,  // back light compensation wieght factor
 	Ext1BLCGridCtlID6,    // back light compensation grid state
-	Ext1CtlID7,
-	Ext1CtlID8,
-	Ext1CtlID9,
-	Ext1CtlID10,
-	Ext1CtlID11,
-	Ext1CtlID12,
-	Ext1CtlID13,
-	Ext1CtlID14,
+	Ext1ExHysterCtlID7,    // exposure hysteresis level (5MP b/w)
+	Ext1ExCtrlSpeedCtlID8,    // exposure control speed level (5MP b/w)
+	Ext1EnhanceModeCtlID9,    // edge enhancement mode (5MP b/w)
+	Ext1EnhanceGainCtlID10,    // edge enhancement gain level (5MP b/w)
+	Ext1EnhanceStarEndCtlID11, // edge enhancement start/end level (5MP b/w) 4bytes
+	Ext12DNRGainEnblCtlID12,  // 2D NR gain enable/gain level (5MP b/w)
+	Ext12DNRGainStarEndCtlID13,  // 2D NR gain start/end level (5MP b/w) 4bytes
+	Ext1GammaCorCtlID14,   // Gamma correction (5MP b/w)
 	Ext1CtlID15
 }ExtCtrlID1_t;
 

@@ -89,8 +89,20 @@
 #define DayNightLevReg 			0x23    // day to night start level. 0 ~ 0x64
 #define NightDayLevReg 			0x24    // night to day start level. 0 ~ 0x64
 
-#define IrisAFReg 			    0x23    // Iris range. 0 ~ 0x30. fist byte represents MSB, sencond byte represents LSB
+#define IrisAFReg 			    0x23    // Iris range. 0 ~ 0x30. fist byte represents MSB, second byte represents LSB
 #define OpZoomReg 			    0x10    // Optical zoom register
+
+#define ExHysterReg				0x0b    // exposure hysteresis register
+#define ExCtrlSpdReg			0x02    // exposure control speed  register same as the AExModeReg!!!
+#define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
+#define ExEnhanceGainReg		0x07    // edge enhancement gain register same as the SharpnessReg2
+#define ExEnhanceStartReg		0x08    // edge enhancement start register
+#define ExEnhanceEndReg			0x09    // edge enhancement end register
+#define Ex2DNREnableReg			0x18    // 2D noise reduction enable register same as the NoiRedu3DModReg
+#define Ex2DNRGainReg			0x19    // 2d noise reduction gain register same as the NoiRedu3DLevReg
+#define Ex2DNRStartReg			0x1a    // 2D noise reduction start register
+#define Ex2DNREndReg			0x1b    // 2d noise reduction end register
+#define ExGammaReg				0x17    // gamma correction register
 
 /******** OSD Menu Control ************************************************/
 #define OSDMenuReg 	     		0x40    // write only. stop(no change):0 left:1 right:2 up:3 down:4 set(OSD_pup_up/return/enter):5

@@ -226,7 +226,28 @@
 #define CY_FX_EXT_CONTROL_16I2C_COMMAND                     (uint16_t)(0x1000)
 #define CY_FX_EXT_CONTROL_17BLC_RANGE                       (uint16_t)(0x1100)
 #define CY_FX_EXT_CONTROL_18BLC_POSITION                    (uint16_t)(0x1200)
-#define CY_FX_EXT_CONTROL_18BLC_GRID                        (uint16_t)(0x1300)
+#define CY_FX_EXT_CONTROL_19BLC_GRID                        (uint16_t)(0x1300)
+
+#define CY_FX_EXT_CONTROL_20EXP_HYSTER                      (uint16_t)(0x1400)
+#define CY_FX_EXT_CONTROL_21EXP_CTRLSPD                     (uint16_t)(0x1500)
+#define CY_FX_EXT_CONTROL_22ENHANCE_MODE                    (uint16_t)(0x1600)
+#define CY_FX_EXT_CONTROL_23ENHANCE_GAIN                    (uint16_t)(0x1700)
+#define CY_FX_EXT_CONTROL_24ENHANCE_STED                    (uint16_t)(0x1800)
+#define CY_FX_EXT_CONTROL_262DNR_STED                       (uint16_t)(0x1A00)
+#define CY_FX_EXT_CONTROL_27GAMMA_MODE                      (uint16_t)(0x1B00)
+
+#define ExHysterReg				0x0b    // exposure hysteresis register
+#define ExCtrlSpdReg			0x02    // exposure control speed  register same as the AExModeReg!!!
+#define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
+#define ExEnhanceGainReg		0x07    // edge enhancement gain register same as the SharpnessReg2
+#define ExEnhanceStartReg		0x08    // edge enhancement start register
+#define ExEnhanceEndReg			0x09    // edge enhancement end register
+#define Ex2DNREnableReg			0x18    // 2D noise reduction enable register same as the NoiRedu3DModReg
+#define Ex2DNRGainReg			0x19    // 2d noise reduction gain register same as the NoiRedu3DLevReg
+#define Ex2DNRStartReg			0x1a    // 2D noise reduction start register
+#define Ex2DNREndReg			0x1b    // 2d noise reduction end register
+#define ExGammaReg				0x17    // gamma correction register
+
 
 /* Camera Terminal specific UVC control selector codes defined in the USB Video Class specification. */
 #define CY_FX_UVC_CT_SCANNING_MODE_CONTROL                  (uint16_t)(0x0100)
