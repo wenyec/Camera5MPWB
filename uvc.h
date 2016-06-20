@@ -235,7 +235,7 @@
 #define CY_FX_EXT_CONTROL_24ENHANCE_STED                    (uint16_t)(0x1800)
 #define CY_FX_EXT_CONTROL_262DNR_STED                       (uint16_t)(0x1A00)
 #define CY_FX_EXT_CONTROL_27GAMMA_MODE                      (uint16_t)(0x1B00)
-
+/*
 #define ExHysterReg				0x0b    // exposure hysteresis register
 #define ExCtrlSpdReg			0x02    // exposure control speed  register same as the AExModeReg!!!
 #define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
@@ -247,7 +247,7 @@
 #define Ex2DNRStartReg			0x1a    // 2D noise reduction start register
 #define Ex2DNREndReg			0x1b    // 2d noise reduction end register
 #define ExGammaReg				0x17    // gamma correction register
-
+*/
 
 /* Camera Terminal specific UVC control selector codes defined in the USB Video Class specification. */
 #define CY_FX_UVC_CT_SCANNING_MODE_CONTROL                  (uint16_t)(0x0100)

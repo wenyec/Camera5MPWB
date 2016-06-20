@@ -56,7 +56,7 @@
 #define BLCModeRegGain			0x11	// The BLC gain assigned to the BLC window
 #define BrightnessReg0   		0x00	// brightness RegAAdd0 [7:0]. devadd 0xc6
 #define BrightnessReg1   		0x01	// brightness RegAAdd1 [1:0] bit1 is sign bit
-#define ContrastReg				0x02	// devadd 0xc6
+#define ContrastReg				0x0d    // 5mpb/w: 0x0d org:x02	// devadd 0xc6
 #define MainsFreqReg 			0x07    // PAL:0 NTSC:1
 #define HuectrlRegMg            0xdc    // hue regadd for Mg     devadd 0xc6
 #define HuectrlRegRed           0xdd    // hue regadd for red    devadd 0xc6
@@ -66,8 +66,8 @@
 #define HuectrlRegBlu           0xe1    // hue regadd for blue   devadd 0xc6
 #define SaturationRegR 		    0x85	// for red devadd 0xf2
 #define SaturationRegB 		    0x86	// for blue devadd 0xf2
-#define SharpnessReg1 			0x06    // edge enhancement enable
-#define SharpnessReg2			0x07    // edge enhancement gain
+#define SharpnessEnReg 			0x06    // edge enhancement enable
+#define SharpnessGaiReg			0x07    // edge enhancement gain
 #define GainModeReg 			0x00	// tbd (?)
 #define WBModeReg 				0x08    // AWD mode. ATW:0 AWC_SET:1 INDOOR:2 OUTDOOR:3 MANUAL:4 PUSH_TO_WHITE:5 (for AWC_SET usage)(?)
 
@@ -75,7 +75,7 @@
 #define ManuRWBReg     	    	0x0a	// Red when wb mode set to manual(4).
 
 #define AExReferleveReg		    0x04	// reference level Temp
-#define AExModeReg	        	0x02	// AEx mode. 0:auto 1:manual.
+#define AExModeReg	        	0x00	// AEx mode. 0:auto 1:manual.
 #define AExAGCReg	        	0x03    // AGC level. 0 ~ 0xff. read only when AEx mode is auto, otherwise, write only.
 #define DigZoomReg              0x2a    // digital zoom 1 ~ 25 (no autofocus system support)
 #define ShutterReg  			0x00    // shutter control. 0x00 ~ 0x12
@@ -93,7 +93,8 @@
 #define OpZoomReg 			    0x10    // Optical zoom register
 
 #define ExHysterReg				0x0b    // exposure hysteresis register
-#define ExCtrlSpdReg			0x02    // exposure control speed  register same as the AExModeReg!!!
+#define ExFinShutReg			0x02
+#define ExCtrlSpdReg			0xf8	// exposure control speed  register same as the AExModeReg!!!
 #define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
 #define ExEnhanceGainReg		0x07    // edge enhancement gain register same as the SharpnessReg2
 #define ExEnhanceStartReg		0x08    // edge enhancement start register
