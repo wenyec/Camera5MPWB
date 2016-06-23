@@ -218,7 +218,7 @@
 #define CY_FX_EXT_CONTROL_9NIGHTDAY_LEVEL                   (uint16_t)(0x0900)
 #define CY_FX_EXT_CONTROL_10EXPOSURE_MODE                   (uint16_t)(0x0A00)
 #define CY_FX_EXT_CONTROL_11AEREFERENCE_LEVEL               (uint16_t)(0x0B00)
-#define CY_FX_EXT_CONTROL_12                     (uint16_t)(0x0C00)
+#define CY_FX_EXT_CONTROL_12                 			    (uint16_t)(0x0C00)
 
 #define CY_FX_EXT_CONTROL_13CAMERA_MODE                     (uint16_t)(0x0D00)
 #define CY_FX_EXT_CONTROL_14SNAP_SHOT                       (uint16_t)(0x0E00)

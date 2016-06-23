@@ -803,7 +803,28 @@ volatile static SensorCtrl EXTSensorPare = //not be used
 		 CyTrue,			//CheckF: the command checked flag
 		 CyFalse,		 	//AvailableF: the command available flag
 		};	// sensor mode control ???
+//{/*1F*/0/*I2CCtrl*/        , 0                    ,11,    0,    0,  0xff, 0xff, 1, 0, 3, 0,   0, 0,   0,   0,                0,  CyTrue, CyFalse, 0}  // index is 0x1f
 //volatile static SensorCtrl EXTI2Ccmd;???
+volatile static SensorCtrl EXTI2Ccmd = //not be used
+		{0,/*no-fix register*/		//Reg1: the command register address1
+		 0,/*no-fix register*/		//Reg2: the command register address2
+		 11,				//UVCLn: the command length
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 0xff,				//UVCMaxLo: the command maximum value low byte
+		 0xff,				//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 0,					//UVCDefVLo: the command default data value low byte
+		 0,					//UVCDefVHi: the command default data value high byte
+		 0,					//UVCCurVLo: the command current data value low byte
+		 0,					//UVCCurVHi: the command current data value high byte
+		 0,/*no-fix address*/ 		//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse,		 	//AvailableF: the command available flag
+		};	// sensor mode control ???
 volatile static SensorCtrl EXTBLCWinPos =
 		{BLCPosReg,			//Reg1: the command register address1
 		 BLCSizeReg,		//Reg2: the command register address2
@@ -1074,7 +1095,7 @@ volatile static SensorCtrl *pEXTSenCtrl[0x40] = {//Extension control
 		&EXTCamMode,
 		0, //&EXTSnapshot,
 		&EXTSensorPare,
-		0, //&EXTI2Ccmd,
+		&EXTI2Ccmd,
 		0, //&Ext1CtlID0 = 0x20,
 		0, //&Ext1CtlID1,
 		0, //&Ext1CtlID2,
@@ -2560,20 +2581,10 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 					 	 case ExtI2CCtlID15:
 					 		 for(idx=0; idx<Len; idx++){
-					 			glEp0Buffer[idx] = I2CCMDArry[idx];
+					 			I2CCMDArry[idx] = glEp0Buffer[idx];
 					 		 }
-					 		 sendData = glEp0Buffer[9];
-					 		 sendData1 = glEp0Buffer[10];
-		#ifdef USB_DEBUG_PRINT
-					 		CyU3PDebugPrint (4, "The I2C command is 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\r\n",
-					 				I2CCMDArry[0], I2CCMDArry[1], I2CCMDArry[2], I2CCMDArry[3], I2CCMDArry[4], I2CCMDArry[5],
-					 				I2CCMDArry[6], I2CCMDArry[7], I2CCMDArry[8], I2CCMDArry[9], I2CCMDArry[10]);
-		#endif
-					 		 if(I2CCMDArry[11] != 0xff)//the data availabel.
-					 		 {
-					 			CyU3PDebugPrint (4, "The I2C current data is not available. try again. %d %d\r\n", I2CCMDArry[9], I2CCMDArry[10]);
-					 		 }
-					 		 break;
+					 		 I2CCmdHandler();
+							 break;
 				 	 	 case ExtAexModCtlID9://4byte
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0)
@@ -2586,7 +2597,7 @@ inline void ControlHandle(uint8_t CtrlID){
 								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = Data1;//AGC. CtrlParArry[CtrlID][14]
 								 if(Data0 == 2 || Data0 == 3){
 									 dataIdx++;
-									 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData1, dataIdx);  //AGC
+									 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //AGC
 								 }
 							 }
 							 pEXTSenCtrl[CtrlID - 0x10]->AvailableF = CyTrue;
@@ -2610,6 +2621,22 @@ inline void ControlHandle(uint8_t CtrlID){
 						     CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x 0x%x\r\n",
 						    		 Data1, Data0, EXTAexModGainlev.UVCCurVLo, EXTShutter.UVCCurVLo);
 						     break;
+						 case ExtCtlShutlevCtlID11://shutter level 2bytes standard operation!!!
+							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
+							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0){
+								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;//AGC. CtrlParArry[CtrlID][14]
+								 if(EXTAexModGainlev.UVCCurVLo == 1 || EXTAexModGainlev.UVCCurVLo == 3){
+									 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x80, dataIdx);  //set AxMode2 bit7
+									 dataIdx++;
+									 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //shutter level
+								 }
+							 }
+							 //CtrlParArry[CtrlID][16] = CyTrue;
+							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+							 CyU3PDebugPrint (4, "Shutter level gotten from host. 0x%x %d; 0x%x 0x%x %d\r\n",
+									 EXTAexModGainlev.UVCCurVLo, EXTAexModGainlev.UVCCurVHi, EXTShutlev.UVCCurVLo, getData, getData1);
+							 break;
+
 	#else	// old fashion
 							 if(Data0 == 0){//set exposure mode auto
 								 if((CTCtrlParArry[AutoExMCtlID1][13] != 8) && (CTCtrlParArry[AutoExMCtlID1][13] != 2)){
@@ -2675,7 +2702,6 @@ inline void ControlHandle(uint8_t CtrlID){
 	#else //combination version
 							 //Data0 = Data0&0x7F; //mask window show flag bit.
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						     /* end test */
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set H/V-Pos
 							 dataIdx++;
 							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //set H/V-size
@@ -2687,7 +2713,6 @@ inline void ControlHandle(uint8_t CtrlID){
 							 EXTBLCWinPos.AvailableF = CyTrue; //ExUCtrlParArry[locCtrlID][16] = CyTrue;
 							 break;
 				 	 	 case Ext1BLCWeightCtlID5:
-					 	 case ExtCtlShutlevCtlID11: //viewer should add fine shutter enable control!!!
 				 	 	 case Ext1ExHysterCtlID7:
 				 	 	 case Ext1ExCtrlSpeedCtlID8:
 				 	 	 case Ext1EnhanceModeCtlID9:
@@ -2806,24 +2831,24 @@ inline void ControlHandle(uint8_t CtrlID){
 			                       switch (setRes)
 			                         {
 			                         	case 1: //1944
-			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x22:0xA2, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x22:0xA2, is60Hz);
 			                         		break;
 			                         	case 2: //1080
-			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+			                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x12:0x92, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x12:0x92, is60Hz);
 			                         		break;
 			                         	case 3: //720
-			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, is60Hz);
 			                         		break;
 			                         	case 4: //VGA
-			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+			                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
 			                         		CyU3PThreadSleep(500);
-			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
+			                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, is60Hz);
 			                         	default:
 			                         		break;
 			                         }
@@ -4405,24 +4430,24 @@ static uint8_t IMcount = 0;
                     switch (setRes)
                      {
                  	case 1: //1944
-                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x22:0xA2, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x22:0xA2, is60Hz);
                  		break;
                  	case 2: //1080
-                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x12:0x92, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", is60Hz? 0x12:0x92, is60Hz);
                  		break;
                  	case 3: //720
-                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, is60Hz);
                  		break;
                  	case 4: //VGA
-                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                 		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                  		//CyU3PThreadSleep(100);
-                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
+                        CyU3PDebugPrint (4, "Set the video mode format1 %x %d\n", ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, is60Hz);
                  		break;
                  	default:
                  		break;
@@ -5103,24 +5128,24 @@ UVCHandleVideoStreamingRqts (
                         switch (glCommitCtrl[3])
                          {
                          	case 1: //1944
-                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x22:0xA2, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x22:0xA2, is60Hz);
                          		break;
                          	case 2: //1080
-                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x12:0x92, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", is60Hz? 0x12:0x92, is60Hz);
                          		break;
                          	case 3: //720
-                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, is60Hz);
                          		break;
                          	case 4: //VGA
-                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                          		CyU3PThreadSleep(500);
-                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
+                                CyU3PDebugPrint (4, "Set the video mode format %x %d\n", ((is60Hz? 0x32:0xB2)&0xFC)|ROIMode, is60Hz);
                          		break;
                          	default:
                          		break;
@@ -5254,19 +5279,19 @@ UVCHandleVideoStreamingRqts (
                            switch (glCommitCtrl[1])
                              {
                              	case 4: //1944
-                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x22:0xA2, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x22:0xA2, is60Hz);
                              		break;
                              	case 3: //1080
-                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x12:0x92, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", is60Hz? 0x12:0x92, is60Hz);
                              		break;
                              	case 2: //720
-                             		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
+                             		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
                              		//CyU3PThreadSleep(500);
-                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
+                                    CyU3PDebugPrint (4, "Set the still mode format %x %d\n", ((is60Hz? 0x02:0x82)&0xFC)|ROIMode, is60Hz);
                              		break;
                             	case 1: //VGA
                              		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
