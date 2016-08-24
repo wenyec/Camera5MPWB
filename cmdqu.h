@@ -83,7 +83,7 @@ typedef enum ExtCtrlID1{
 	Ext12DNRGainEnblCtlID12,  // 2D NR gain enable/gain level (5MP b/w)
 	Ext12DNRGainStarEndCtlID13,  // 2D NR gain start/end level (5MP b/w) 4bytes
 	Ext1GammaCorCtlID14,   // Gamma correction (5MP b/w)
-	Ext1CtlID15
+	Ext1AGCMaxLimetCtlID15 // AGC maximum limitation (5MP b/w)
 }ExtCtrlID1_t;
 
 

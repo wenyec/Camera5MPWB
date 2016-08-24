@@ -93,6 +93,7 @@
 #define OpZoomReg 			    0x10    // Optical zoom register
 
 #define ExHysterReg				0x0b    // exposure hysteresis register
+#define AGCMaxLimtReg			0x0c    // exposure AGC maximum limitation register
 #define ExFinShutReg			0x02
 #define ExCtrlSpdReg			0xf8	// exposure control speed  register same as the AExModeReg!!!
 #define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1

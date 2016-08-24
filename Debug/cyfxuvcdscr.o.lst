@@ -233,7 +233,7 @@
  241 00c9 FD       		.byte	-3
  242 00ca 9F       		.byte	-97
  243 00cb FF       		.byte	-1
- 244 00cc 06       		.byte	6
+ 244 00cc 0E       		.byte	14
  245 00cd 00       		.byte	0
  246 00ce 09       		.byte	9
  247 00cf 24       		.byte	36
@@ -593,7 +593,7 @@
  605 0230 03       		.byte	3
  606 0231 FF       		.byte	-1
  607 0232 D7       		.byte	-41
- 608 0233 07       		.byte	7
+ 608 0233 0F       		.byte	15
  609 0234 00       		.byte	0
  610 0235 09       		.byte	9
  611 0236 24       		.byte	36
@@ -789,16 +789,16 @@
  809              		.file 3 "c:\\program files (x86)\\cypress\\ez-usb fx3 sdk\\1.3\\arm gcc\\arm-none-eabi\\include\\s
 DEFINED SYMBOLS
                             *ABS*:00000000 cyfxuvcdscr.c
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:30     .rodata:00000000 CyFxUSBProductDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:81     .rodata:00000030 CyFxUSBManufactureDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:140    .rodata:00000068 CyFxUSBStringLangIDDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:147    .rodata:0000006c CyFxUSBSSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:486    .rodata:000001bc CyFxUSBBOSDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:512    .rodata:000001d4 CyFxUSBHSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:737    .rodata:000002b4 CyFxUSBFSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:750    .rodata:000002c0 CyFxUSBDeviceQualDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:764    .rodata:000002cc CyFxUSBDeviceDscrSS
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:786    .rodata:000002e0 CyFxUSBDeviceDscr
-C:\Users\wcheng\AppData\Local\Temp\ccRyNy9l.s:27     .rodata:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:30     .rodata:00000000 CyFxUSBProductDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:81     .rodata:00000030 CyFxUSBManufactureDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:140    .rodata:00000068 CyFxUSBStringLangIDDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:147    .rodata:0000006c CyFxUSBSSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:486    .rodata:000001bc CyFxUSBBOSDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:512    .rodata:000001d4 CyFxUSBHSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:737    .rodata:000002b4 CyFxUSBFSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:750    .rodata:000002c0 CyFxUSBDeviceQualDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:764    .rodata:000002cc CyFxUSBDeviceDscrSS
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:786    .rodata:000002e0 CyFxUSBDeviceDscr
+C:\Users\wcheng\AppData\Local\Temp\ccTTa6Ke.s:27     .rodata:00000000 $d
 
 NO UNDEFINED SYMBOLS

@@ -235,6 +235,7 @@
 #define CY_FX_EXT_CONTROL_24ENHANCE_STED                    (uint16_t)(0x1800)
 #define CY_FX_EXT_CONTROL_262DNR_STED                       (uint16_t)(0x1A00)
 #define CY_FX_EXT_CONTROL_27GAMMA_MODE                      (uint16_t)(0x1B00)
+#define CY_FX_EXT_CONTROL_28AGC_MAX		                    (uint16_t)(0x1C00)
 /*
 #define ExHysterReg				0x0b    // exposure hysteresis register
 #define ExCtrlSpdReg			0x02    // exposure control speed  register same as the AExModeReg!!!

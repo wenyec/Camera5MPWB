@@ -1079,6 +1079,27 @@ volatile static SensorCtrl EXTGammaCor =
 		 CyFalse			//AvailableF: the command available flag
 		}; //
 
+volatile static SensorCtrl EXTAGCMaxLimit =
+		{AGCMaxLimtReg,			//Reg1: the command register address1
+		 AGCMaxLimtReg,			//Reg2: the command register address2
+		 2,					//UVCLn: the command length: 1th for mode and 2nd for gain level
+		 0,					//UVCMinLo: the command minimum value low byte
+		 0,					//UVCMinHi: the command minimum value high byte
+		 0x10,				//UVCMaxLo: the command maximum value low byte
+		 0,					//UVCMaxHi: the command maximum value high byte
+		 1,					//UVCResLo: the command Res. value low byte
+		 0,					//UVCResHi: the command Res. value high byte
+		 3,					//UVCInfoLo: the command information value low byte
+		 0,					//UVCInfoHi: the command information value high byte
+		 0x00,				//UVCDefVLo: the command default data value low byte
+		 0, 				//UVCDefVHi: the command default data value high byte
+		 0x00,				//UVCCurVLo: the command current data value low byte
+		 0,					//UVCCurVHi: the command current data value high byte
+		 I2C_EAGLESDP_ADDR,	//DeviceAdd: the device address
+		 CyTrue,			//CheckF: the command checked flag
+		 CyFalse			//AvailableF: the command available flag
+		}; //
+
 volatile static SensorCtrl *pEXTSenCtrl[0x40] = {//Extension control
 		&EXTShutter,
 		&EXTSensUp,
@@ -1111,7 +1132,7 @@ volatile static SensorCtrl *pEXTSenCtrl[0x40] = {//Extension control
 		&EXT2DNRGain,       // 2D noise reduction Gain level
 		&EXT2DNRSTED,       // 2D noise reduction start/end level
 		&EXTGammaCor,		// Gamma correction
-		0, //&Ext1CtlID15,
+		&EXTAGCMaxLimit, 	// AGC Maximum Gain limitation &Ext1AGCMaxLimetCtlID15,
 		0
 };
 
@@ -1426,211 +1447,20 @@ inline void ControlHandle(uint8_t CtrlID){
 				 			CyU3PDebugPrint (4, "The I2C current data is not available. try again. %d %d\r\n", I2CCMDArry[9], I2CCMDArry[10]);
 				 		 }
 				 		 break;
-				 		 case Ext1BLCRangeCtlID4:
-/*			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
+				 	 case Ext1BLCRangeCtlID4:
 			 	 	 case Ext1BLCWeightCtlID5:
-			 	 		 /*
-						 //glEp0Buffer[0] = ExUCtrlParArry[locCtrlID][13];//ext_control array;
-						 //glEp0Buffer[1] = ExUCtrlParArry[locCtrlID][14];
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
-			 	 			glEp0Buffer[0] = Data0;
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-			 	 		 break;
-			 	 		 */
 				 	 case ExtShutCtlID0:
-				 		 /*
-					     RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-
-						 //glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
-								 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-						 //glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			Data0 = SensorGetControl(RegAdd0, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;
-			 	 			Data1 = (Data0&0x70)>>4;
-			 	 			glEp0Buffer[0] = Data1;
-			 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 			//curFlag[CtrlID] = CyTrue;
-							CyU3PDebugPrint (4, "test shutter speed. 0x%x 0x%x 0x%x\r\n", glEp0Buffer[0], Data1, Data0);
-
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = Data1;//glEp0Buffer[1];
-						 CyU3PDebugPrint (4, "test shutter speed2. 0x%x 0x%x 0x%x\r\n", glEp0Buffer[0], sendData, sendData1);
-				 		 break;
-				 		 */
 				 	 case ExtCtlShutlevCtlID11:
-				 		 /*
-					     RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-
-						 //glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;
-								 //CtrlParArry[CtrlID][13];//SensorGetControl(RegAdd0, devAdd);
-						 //glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-				 		 break;
-				 		 */
 				 		 /* the exposure hysteresis to gamma correction */
 			 	 	 case Ext1ExHysterCtlID7:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext1ExCtrlSpeedCtlID8:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext1EnhanceModeCtlID9:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext1EnhanceGainCtlID10:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext1EnhanceStarEndCtlID11:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext12DNRGainEnblCtlID12:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext12DNRGainStarEndCtlID13://4bytes
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = 0;//pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-							 glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;//ext_control array;
-							 glEp0Buffer[3] = 0;//pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[2] = SensorGetControl(RegAdd0, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = glEp0Buffer[2];
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 			 	 	 case Ext1GammaCorCtlID14:
-			 	 		 /*
-			 	 		 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
-			 	 		 }else{
-			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-			 	 			glEp0Buffer[1] = SensorGetControl(RegAdd0, devAdd);
-			 	 			curFlag[CtrlID] = CyTrue;
-			 	 		 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-			 	 		  */
+			 	 	 case Ext1AGCMaxLimetCtlID15:
 					 case ExtExRefCtlID10:
 			 	 	 default:
 			 	 		 if(curFlag[CtrlID]){
@@ -1696,11 +1526,13 @@ inline void ControlHandle(uint8_t CtrlID){
 							curFlag[CtrlID] = CyTrue;
 						 }
 						 //Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
-						  if(Data0&0x80){
+						 /*//new implementation 8/23/2016
+						 if(Data0&0x80){
 							  Data0 = ~Data0;
 						  }else{
 							  Data0 = Data0 + 0x80;
 						  }
+						  */
 						 glEp0Buffer[0] = Data0;
 						 glEp0Buffer[1] = 0;
 						 sendData = glEp0Buffer[0];
@@ -1759,69 +1591,9 @@ inline void ControlHandle(uint8_t CtrlID){
 						 sendData1 = glEp0Buffer[2];
 						 break;
 					 case BLCCtlID0:
-						 /*
-						 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
-						 }else{
-							glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
-							glEp0Buffer[0] = glEp0Buffer[0]&0x1;
-							pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
-							glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
-							curFlag[CtrlID] = CyTrue;
-						 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 					 case ShapCtlID7:
-						 /*
-						 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = pPUCSenCtrl[CtrlID]->UVCCurVLo;//ext_control array;
-							 glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
-						 }else{
-							glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
-							pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
-							glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi;
-							curFlag[CtrlID] = CyTrue;
-						 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 					 case ConsCtlID2:
-						 /*
-						 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = CtrlParArry[ConsCtlID2][13];//ext_control array;
-							 glEp0Buffer[1] = CtrlParArry[ConsCtlID2][14];
-						 }else{
-							glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
-							CtrlParArry[ConsCtlID2][13] = glEp0Buffer[0];
-							glEp0Buffer[1] = CtrlParArry[ConsCtlID2][14];
-							curFlag[CtrlID] = CyTrue;
-						 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 					 case WBTMdCtlID9:
-						 /*
-						 if(curFlag[CtrlID]){
-							 glEp0Buffer[0] = CtrlParArry[CtrlID][13];//ext_control array;
-							 glEp0Buffer[0] = glEp0Buffer[0] & 0x3;    // get two least Bits
-							 glEp0Buffer[1] = CtrlParArry[CtrlID][14];
-						 }else{
-							glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
-							CtrlParArry[CtrlID][13] = glEp0Buffer[0];
-							glEp0Buffer[0] = glEp0Buffer[0] & 0x3;    // get two least Bits
-							glEp0Buffer[1] = CtrlParArry[CtrlID][14];
-
-							curFlag[CtrlID] = CyTrue;
-						 }
-						 sendData = glEp0Buffer[0];
-						 sendData1 = glEp0Buffer[1];
-						 break;
-						 */
 					 case SaturCtlID6:
 					 default:
 						 if(curFlag[CtrlID]){
@@ -2016,523 +1788,6 @@ inline void ControlHandle(uint8_t CtrlID){
 		 	 }
 		 	 break;
 		 case CY_FX_USB_UVC_SET_CUR_REQ:
-
- // set request control will be removed.
-/*********************************************************/
-#if 0 //old implementation
-
-			  Data0 = glEp0Buffer[0];
-			  Data1 = glEp0Buffer[1];
-			  getData = glEp0Buffer[0];
-			  getData1 = glEp0Buffer[2];
-#ifdef USB_DEBUG_PRINT
-			  CyU3PDebugPrint (4, "The setup sensor value (0) %d 0x%x 0x%x 0x%x\r\n", CtrlID, readCount, glEp0Buffer[0], glEp0Buffer[1]); // additional debug
-#endif
-			  switch(CtrlID)
-				 {
-					 case ExtShutCtlID0:
-					     //RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][0];
-						 //devAdd = EXTShutter.DeviceAdd;
-						 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0; //CtrlParArry[CtrlID][13] save new setting
-#if 1	// register setting directly
-					     if((EXTAexModGainlev.UVCCurVLo&0x3) != 0)//based on the Aex Mode 2 has been masked in viewer!!!
-					     {
-					    	 Data0 = (Data0 << 4) | (EXTAexModGainlev.UVCCurVLo);
-					    	 dataIdx = 0;
-							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, 0x00, dataIdx);  //clean Axmode2 bit7
-							 dataIdx++;
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-					     }
-					     CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x 0x%x\r\n",
-					    		 Data1, Data0, EXTAexModGainlev.UVCCurVLo, EXTShutter.UVCCurVLo);
-					     break;
-#else	// old fashion
-						 if(Data0 == 0){//set exposure mode auto
-							 if((CTCtrlParArry[AutoExMCtlID1][13] != 8) && (CTCtrlParArry[AutoExMCtlID1][13] != 2)){
-								 if(CTCtrlParArry[AutoExMCtlID1][13] == 1) {
-									 CTCtrlParArry[AutoExMCtlID1][13] = 8; //aperture priority
-								 }else{
-									 CTCtrlParArry[AutoExMCtlID1][13] = 2; //auto mode
-								 }
-							 }
-						 }else{
-							 Data1 = Data0 - 1;
-							 if((CTCtrlParArry[AutoExMCtlID1][13] != 1) && (CTCtrlParArry[AutoExMCtlID1][13] != 4)){
-								 if(CTCtrlParArry[AutoExMCtlID1][13] == 8) {
-									 CTCtrlParArry[AutoExMCtlID1][13] = 1; //manual mode
-								 }else{
-									 CTCtrlParArry[AutoExMCtlID1][13] = 4; //shutter priority
-								 }
-							 }
-							 if(Data1 < 8){
-								 CTCtrlParArry[ExTmACtlID3][13] = ExTime[Data1][0];
-								 CTCtrlParArry[ExTmACtlID3][14] = ExTime[Data1][1];
-							 }else{
-								 CTCtrlParArry[ExTmACtlID3][13] = ExTime[7][0];
-								 CTCtrlParArry[ExTmACtlID3][14] = ExTime[7][1];
-							 }
-						 }
-						 EXTShutter.AvailableF = CyTrue; //CtrlParArry[CtrlID][16] = CyTrue;
-						 dataIdx = 0;
-						 Data1 = getShutCtrl(Data0, &AxMode); //call setting shutter control Reg. routine.
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, AxMode, dataIdx);  //First for Axmode 0
-						 if(AxMode){
-							 dataIdx++;
-							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, 0x80, dataIdx);  //Second for Axmode 2
-							 dataIdx++;
-							 cmdSet(cmdQuptr, CtrlID, 0x12, devAdd, Data1, dataIdx);  //Third for fine shutter adjustment
-						 }
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 //CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x ox%x\r\n", Data1, Data0, CTCtrlParArry[ExTmACtlID3][13], CtrlParArry[CtrlID][13]);
-						 break;
-#endif
-					 case ExtAexModCtlID9://exposure&AGC 4bytes standard operation!!!
-					     //RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     //devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-					     dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 if(EXTAexModGainlev.UVCCurVLo != getData)
-						 {
-							 EXTAexModGainlev.UVCCurVLo = getData;//exposure mode (assume b3:2=00, no BLC window). CtrlParArry[CtrlID][13]
-							 Data0 = Data0 | (EXTShutter.UVCCurVLo << 4);
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Exposure
-							 /*
-							 dataIdx++;
-							 if(getData == 1 || getData == 3){
-								 cmdSet(cmdQuptr, CtrlID, 0x2, devAdd, 0x80, dataIdx);  //set AEX mode2 to 0x80 (fixed shutter speed set fine adjustment via reg. 0x12)
-								 dataIdx++;
-							 }else{
-								 cmdSet(cmdQuptr, CtrlID, 0x2, devAdd, 0x00, dataIdx);  //set AEX mode2 to 0x00
-								 dataIdx++;
-							 }
-							 */
-						 }
-						 if(EXTAexModGainlev.UVCCurVHi != getData1){
-							 EXTAexModGainlev.UVCCurVHi = getData1;//AGC. CtrlParArry[CtrlID][14]
-							 if(getData == 2 || getData == 3){
-								 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData1, dataIdx);  //AGC
-							 }
-						 }
-						 //CtrlParArry[CtrlID][16] = CyTrue;
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CyU3PDebugPrint (4, "ExpM&AGC gotten from host. 0x%x %d; 0x%x 0x%x %d\r\n",
-								 EXTAexModGainlev.UVCCurVLo, EXTAexModGainlev.UVCCurVHi, EXTShutter.UVCCurVLo, Data0, getData1);
-						 break;
-
-					 case ExtCtlShutlevCtlID11://shutter level 2bytes standard operation!!!
-					     //RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     //devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-					     dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 if(0&&pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != getData)
-						 {
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = getData;//exposure mode (assume b3:2=00, no BLC window). CtrlParArry[CtrlID][13]
-							 //Data0 = Data0 | (EXTShutter.UVCCurVLo << 4);
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Exposure
-							 dataIdx++;
-						 }
-						 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != getData){
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = getData;//AGC. CtrlParArry[CtrlID][14]
-							 if(EXTAexModGainlev.UVCCurVLo == 1 || EXTAexModGainlev.UVCCurVLo == 3){
-								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x80, dataIdx);  //set AxMode2 bit7
-								 dataIdx++;
-								 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData, dataIdx);  //shutter level
-							 }
-						 }
-						 //CtrlParArry[CtrlID][16] = CyTrue;
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CyU3PDebugPrint (4, "Shutter level gotten from host. 0x%x %d; 0x%x 0x%x %d\r\n",
-								 EXTAexModGainlev.UVCCurVLo, EXTAexModGainlev.UVCCurVHi, EXTShutlev.UVCCurVLo, getData, getData1);
-						 break;
-
-						 /* the exposure hysteresis to gamma correction */
-					 case Ext1ExHysterCtlID7:    // exposure hysteresis level (5MP b/w)
-					 case Ext1ExCtrlSpeedCtlID8:    // exposure control speed level (5MP b/w)
-					 case Ext1EnhanceModeCtlID9:    // edge enhancement mode (5MP b/w)
-					 case Ext1EnhanceGainCtlID10:    // edge enhancement gain level (5MP b/w)
-					 case Ext1GammaCorCtlID14:   // Gamma correction (5MP b/w)
-
-					     //RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     //devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-					     dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 if(0&&pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != getData)
-						 {
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = getData;//exposure mode (assume b3:2=00, no BLC window). CtrlParArry[CtrlID][13]
-							 //Data0 = Data0 | (EXTShutter.UVCCurVLo << 4);
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Exposure
-							 dataIdx++;
-						 }
-						 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != getData){
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = getData;//AGC. CtrlParArry[CtrlID][14]
-							 if(EXTAexModGainlev.UVCCurVLo == 1 || EXTAexModGainlev.UVCCurVLo == 3){
-								 //cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x80, dataIdx);  //set AxMode2 bit7
-								 //dataIdx++;
-								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, getData, dataIdx);  //shutter level
-							 }
-						 }
-						 //CtrlParArry[CtrlID][16] = CyTrue;
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CyU3PDebugPrint (4, "Shutter level gotten from host. 0x%x %d; 0x%x 0x%x %d\r\n",
-								 EXTAexModGainlev.UVCCurVLo, EXTAexModGainlev.UVCCurVHi, EXTShutlev.UVCCurVLo, getData, getData1);
-						 break;
-
-					 case Ext1EnhanceStarEndCtlID11: // edge enhancement start/end level (5MP b/w) 4bytes
-					 case Ext12DNRGainEnblCtlID12:  // 2D NR gain enable/gain level (5MP b/w) 4bytes
-					 case Ext12DNRGainStarEndCtlID13:  // 2D NR gain start/end level (5MP b/w) 4bytes
-					     //RegAdd0 = pEXTSenCtrl[CtrlID - 0x10]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = pEXTSenCtrl[CtrlID - 0x10]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     //devAdd = pEXTSenCtrl[CtrlID - 0x10]->DeviceAdd;
-					     dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != getData)
-						 {
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = getData;//exposure mode (assume b3:2=00, no BLC window). CtrlParArry[CtrlID][13]
-							 //Data0 = Data0 | (EXTShutter.UVCCurVLo << 4);
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Exposure
-							 /*
-							 dataIdx++;
-							 if(getData == 1 || getData == 3){
-								 cmdSet(cmdQuptr, CtrlID, 0x2, devAdd, 0x80, dataIdx);  //set AEX mode2 to 0x80 (fixed shutter speed set fine adjustment via reg. 0x12)
-								 dataIdx++;
-							 }else{
-								 cmdSet(cmdQuptr, CtrlID, 0x2, devAdd, 0x00, dataIdx);  //set AEX mode2 to 0x00
-								 dataIdx++;
-							 }
-							 */
-						 }
-						 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi != getData1){
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = getData1;//AGC. CtrlParArry[CtrlID][14]
-							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData1, dataIdx);  //AGC
-						 }
-						 //CtrlParArry[CtrlID][16] = CyTrue;
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CyU3PDebugPrint (4, "ExpM&AGC gotten from host. 0x%x %d; 0x%x 0x%x %d\r\n",
-								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo, pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi, EXTShutter.UVCCurVLo, Data0, getData1);
-						 break;
-
-					 case ExtCamMCtlID12:
-						 dataIdx = 0;
-						 if(Data0 <= 3){
-							 CamMode = 0; //set 1080p flag
-							 Data1 = Data0;
-						 }else{
-							 CamMode = 1; //set 720p flag
-							 Data1 = Data0-4;
-						 }
-						 CtrlParArry[CtrlID][13] = Data0;
-						 CtrlParArry[BLCIndex][13] = Data1;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 //CyU3PDebugPrint (4, "The CamMode value %d %d %d %d\r\n", Data1, Data0, CamMode, CtrlParArry[CtrlID][13]);
-						 break;
-					 case ExtSensorParCtlID14://TODO
-						 dataIdx = 0;
-						 if(Data0 == 0){ //set default sensor parameters.
-							 Data0 = 1;
-						 }else{ //save current sensor parameters.
-							 Data0 = 0;
-						 }
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-					 case ExtI2CCtlID15:
-				 		 for(idx=0; idx<Len; idx++){
-				 			I2CCMDArry[idx] = glEp0Buffer[idx];
-				 		 }
-				 		I2CCmdHandler();
-						 break;
-					 case Ext1BLCRangeCtlID4: //registers value BLD window enable (0x17); position (0x13); size (0x14).
-					     RegAdd0 = EXTBLCWinPos.Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     RegAdd1 = EXTBLCWinPos.Reg2; //ExUCtrlParArry[locCtrlID][0];
-						 devAdd = EXTBLCWinPos.DeviceAdd;
-
-						 dataIdx = 0;
-#if 0 //seperate version
-						 getData = Data0&0xF; //get LSB H-Pos.
-						 getData1 = Data0>>4; //get MSB V-Pos.
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 if(getData1&0x8){//enable BLD window
-							 cmdSet(cmdQuptr, CtrlID, 0x17, devAdd, 1, dataIdx); //show BLC window
-						 }else{ //disable BLD window
-							 cmdSet(cmdQuptr, CtrlID, 0x17, devAdd, 0, dataIdx); //close BLC window
-						 }
-						 getData1 = getData1&0x7; //mask bit7 ~ bit3/
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, getData, dataIdx);  //set H-Pos
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, getData1, dataIdx);  //set V-Pos
-						 dataIdx++;
-						 getData = Data1&0xf; //get LSB H-size.
-						 getData1 = Data1>>4; //get MSB V-size.
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData, dataIdx);  //set H-size
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, getData1, dataIdx);  //set V-size
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-#else //combination version
-						 //Data0 = Data0&0x7F; //mask window show flag bit.
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-					     /* end test */
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set H/V-Pos
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //set H/V-size
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 getData1 = Data1;
-#endif
-						 EXTBLCWinPos.UVCCurVLo = Data0; //ExUCtrlParArry[locCtrlID][13] = Data0;//ext_control array;
-						 EXTBLCWinPos.UVCCurVHi = Data1; //ExUCtrlParArry[locCtrlID][14] = Data1;
-						 EXTBLCWinPos.AvailableF = CyTrue; //ExUCtrlParArry[locCtrlID][16] = CyTrue;
-						 break;
-					 case Ext1BLCWeightCtlID5: //register value 0x11 (need check).
-					     //RegAdd0 = EXTBLCWeight.Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     //RegAdd1 = EXTBLCWeight.Reg2; //ExUCtrlParArry[locCtrlID][0];
-						 //devAdd = EXTBLCWeight.DeviceAdd;
-
-						 dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set weight factor
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 EXTBLCWeight.UVCCurVLo = Data0;
-						 EXTBLCWeight.AvailableF = CyTrue;
-						 //ExUCtrlParArry[locCtrlID][13] = Data0;
-						 //ExUCtrlParArry[locCtrlID][16] = CyTrue;
-						 break;
-					 case Ext1BLCGridCtlID6:
-						 dataIdx = 0;
-						 ExUCtrlParArry[locCtrlID][13] = Data0;
-						 if(Data0 == 1){
-							 Data0 = PUCBLC.UVCCurVLo|0x80;
-						 }else{
-							 Data0 = PUCBLC.UVCCurVLo&0x7f;
-						 }
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set grid status
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 //ExUCtrlParArry[locCtrlID][13] = Data0;
-						 ExUCtrlParArry[locCtrlID][16] = CyTrue;
-						 break;
-			  	  	 case BrgtCtlID1:
-#if 0 //cancel for 5MP w/b camera
-						 dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						  /****** double check the register0 Data1 ******/
-						  if(Data0&0x80){
-							  Data1 = ((Data0 >> 6)&0x01)|(CtrlParArry[CtrlID][14]&0xfc);
-						  }else{
-							  Data1 = ((Data0 >> 6)|0x02)|(CtrlParArry[CtrlID][14]&0xfc);
-						  }
-						 Data1 |= ~0x03;
-						 Data1 &= 0xC7;
-					  	 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //First
-					  	 dataIdx++;
-
-						 Data0 = (Data0 << 2);
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);   //Second
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 CtrlParArry[CtrlID][13] = Data0;
-						 CtrlParArry[CtrlID][14] = Data1;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-#endif
-						 dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						  /****** double check the register0 Data1 ******/
-						  if(Data0&0x80){
-							  Data0 = Data0 - 0x80;
-						  }else{
-							  Data0 = ~Data0;
-						  }
-					  	 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 CtrlParArry[CtrlID][13] = Data0;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-
-
-						 break;
-					 case HueCtlID5:  //mapping to hue control registers
-						 dataIdx = 0;
-
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, (Data0-GREEN_BASE), dataIdx);  //First
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, HuectrlRegMg, devAdd, (Data0-MAGENTA_BASE), dataIdx);  //Second
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, HuectrlRegYel, devAdd, (Data0-YELLOW_BASE), dataIdx);  //Third
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, HuectrlRegCy, devAdd, (Data0-CYAN_BASE), dataIdx);  //Fourth
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, HuectrlRegRed, devAdd, (Data0-RED_BASE), dataIdx);  //Fifth
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, (glEp0Buffer[0]-BLUE_BASE), dataIdx);   //Sixth
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 CtrlParArry[CtrlID][13] = glEp0Buffer[0] - GREEN_BASE;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-					 case SaturCtlID6:
-						 dataIdx = 0;
-						 Data1 = Data0 = glEp0Buffer[0]; //red and blue set the same value.
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //Second
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 CtrlParArry[CtrlID][13] = Data0;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-
-					 case WBTLevCtlID11:
-						 Data0 = glEp0Buffer[0]; //blue
-						 Data1 = glEp0Buffer[2]; //red
-						 dataIdx = 0;
-
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 dataIdx++;
-						 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //Second
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 WBMenuCmpArry[0] = Data0;//using for blue part
-						 WBMenuCmpArry[2] = Data1;//using for red part
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-					 case MFreqCtlID4:
-						 dataIdx = 0;
-						 CtrlParArry[CtrlID][13] = Data0;
-						 Data0 = Data0 - 1;
-						 is60Hz = Data0;
-						 if(Data0 < 0)  //for specific check. if it's minor value, set to 0.
-						 {
-							 Data0 = 0;  // 50Hz (PAL)
-							 is60Hz = CyFalse;
-						 }
-						 else if(Data0 >2)
-						 {
-							 Data0 = 1;  // 60Hz (NTSC)
-							 is60Hz = CyTrue;
-						 }
-						 CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
-						 if (gpif_initialized == CyTrue)
-						 {
-							 //CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-		                       switch (setRes)
-		                         {
-		                         	case 1: //1944
-		                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x64:0xE4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-		                         		CyU3PThreadSleep(500);
-		                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x64:0xE4, is60Hz);
-		                         		break;
-		                         	case 2: //1080
-		                         		SensorSetIrisControl(0x1, 0x30, is60Hz? 0x54:0xD4, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-		                         		CyU3PThreadSleep(500);
-		                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", is60Hz? 0x54:0xD4, is60Hz);
-		                         		break;
-		                         	case 3: //720
-		                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-		                         		CyU3PThreadSleep(500);
-		                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x45:0xC5)&0xFC)|ROIMode, is60Hz);
-		                         		break;
-		                         	case 4: //VGA
-		                         		SensorSetIrisControl(0x1, 0x30, ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, I2C_DSPBOARD_ADDR_WR/*boardID*/);//start 5MP Res
-		                         		CyU3PThreadSleep(500);
-		                                CyU3PDebugPrint (4, "FSet the video mode format %x %d\n", ((is60Hz? 0x75:0xF5)&0xFC)|ROIMode, is60Hz);
-		                         	default:
-		                         		break;
-		                         }
-							 //CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 }
-
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-				 	 case BLCCtlID0:
-					     RegAdd0 = pPUCSenCtrl[CtrlID]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     RegAdd1 = pPUCSenCtrl[CtrlID]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     devAdd = pPUCSenCtrl[CtrlID]->DeviceAdd;
-					     dataIdx = 0;
-
-						 //CtrlParArry[CtrlID][13] = Data0;
-						 //CtrlParArry[CtrlID][16] = CyTrue;
-						 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
-						 pPUCSenCtrl[CtrlID]->AvailableF = CyTrue;
-
-						 if(CamMode == 1) //mode 720p
-						 {
-							 if(Data0 < 3){
-				 				 Data0 += 4;
-				 			 }else{
-								CyU3PDebugPrint (4, "back light compensation setting is not correct. %d %d\r\n", CamMode, getData);
-								Data0 = 4; //set to default.
-				 			 }
-				 		 }
-						 //CtrlParArry[CamModeIndex][13] = Data0;
-						 dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-				 		 break;
-				 	 case ShapCtlID7:
-					     RegAdd0 = pPUCSenCtrl[CtrlID]->Reg1; //ExUCtrlParArry[locCtrlID][0];
-					     RegAdd1 = pPUCSenCtrl[CtrlID]->Reg2; //ExUCtrlParArry[locCtrlID][1];
-					     devAdd = pPUCSenCtrl[CtrlID]->DeviceAdd;
-					     dataIdx = 0;
-						 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
-						 pPUCSenCtrl[CtrlID]->AvailableF = CyTrue;
-						 if(Data0 != 0){
-							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-#ifdef COLOR
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //Second: set enhancement value.
-#else
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x1, dataIdx);  //First: enable sharpness.
-							 dataIdx++;
-							 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //Second: set enhancement value.
-#endif
-							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-						 }else{
-							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x0, dataIdx);  //First: disable sharpness.
-							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 }
-						 break;
-					 case ExtExRefCtlID10:
-					 case ConsCtlID2:
-						 dataIdx = 0;
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 CtrlParArry[ConsCtlID2][13] = Data0;
-						 CtrlParArry[ConsCtlID2][16] = CyTrue;
-						 //CtrlParArry[ExtExRefCtlID10][13] = Data0;  //it's canceled as the both is the same control in the sensor.
-						 //CtrlParArry[ExtExRefCtlID10][16] = CyTrue;
-
-						 break;
-					 default:
-						 dataIdx = 0;
-
-						 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-						 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
-						 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
-
-						 CtrlParArry[CtrlID][13] = Data0;
-						 CtrlParArry[CtrlID][16] = CyTrue;
-						 break;
-				 }
-
-#endif
-/*********************************************************/
 			  apiRetStatus = CyU3PUsbGetEP0Data (CY_FX_UVC_MAX_PROBE_SETTING_ALIGNED,
 				  glEp0Buffer, &readCount);
 			  if (apiRetStatus == CY_U3P_SUCCESS )
@@ -2719,6 +1974,7 @@ inline void ControlHandle(uint8_t CtrlID){
 				 	 	 case Ext1EnhanceGainCtlID10:
 				 	 	 case Ext12DNRGainEnblCtlID12:
 				 	 	 case Ext1GammaCorCtlID14:
+				 	 	 case Ext1AGCMaxLimetCtlID15:
 				 	 	 case Ext1EnhanceStarEndCtlID11://4bytes
 				 	 	 case Ext12DNRGainStarEndCtlID13://4bytes
 						 case ExtExRefCtlID10:
@@ -2782,11 +2038,13 @@ inline void ControlHandle(uint8_t CtrlID){
 	#endif
 								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 								  /****** double check the register0 Data1 ******/
-								  if(Data0&0x80){
+								 /*// new I2C command. direct using Data0 coming from host. 8/23/2016
+								 if(Data0&0x80){
 									  Data0 = Data0 - 0x80;
 								  }else{
 									  Data0 = ~Data0;
 								  }
+								  */
 							  	 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //First
 								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 
@@ -5011,6 +4269,11 @@ UVCHandleExtensionUnitRqts (
     		//CtrlAdd = ExUCtrlParArry[Ext1GammaCorCtlID14-EXUAOFFSET][0];
       		ControlHandle(Ext1GammaCorCtlID14);
 			CyU3PDebugPrint (4, "The gamma command 0x%x 0x%x\r\n", wValue, bRequest);
+    		break;
+		case CY_FX_EXT_CONTROL_28AGC_MAX: //AGC Maximum limitation CONTROL28
+    		//CtrlAdd = ExUCtrlParArry[Ext1GammaCorCtlID14-EXUAOFFSET][0];
+      		ControlHandle(Ext1AGCMaxLimetCtlID15);
+			CyU3PDebugPrint (4, "The AGC Max command 0x%x 0x%x\r\n", wValue, bRequest);
     		break;
 
    	default:
