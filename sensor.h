@@ -52,10 +52,11 @@
 
 /******	 Definition of feature registers for Eagle DSP board	**************************************************************/
 
-#define BLCModeReg				0x10    // off:0 blc:1 hblc:2 wdr:3
+#define BLCModeRegAct			0x10    // off:0 blc:1 hblc:2 wdr:3
+#define BLCModeRegGain			0x11	// The BLC gain assigned to the BLC window
 #define BrightnessReg0   		0x00	// brightness RegAAdd0 [7:0]. devadd 0xc6
 #define BrightnessReg1   		0x01	// brightness RegAAdd1 [1:0] bit1 is sign bit
-#define ContrastReg				0x02	// devadd 0xc6
+#define ContrastReg				0x0d    // 5mpb/w: 0x0d org:x02	// devadd 0xc6
 #define MainsFreqReg 			0x07    // PAL:0 NTSC:1
 #define HuectrlRegMg            0xdc    // hue regadd for Mg     devadd 0xc6
 #define HuectrlRegRed           0xdd    // hue regadd for red    devadd 0xc6
@@ -65,7 +66,8 @@
 #define HuectrlRegBlu           0xe1    // hue regadd for blue   devadd 0xc6
 #define SaturationRegR 		    0x85	// for red devadd 0xf2
 #define SaturationRegB 		    0x86	// for blue devadd 0xf2
-#define SharpnessReg 			0x06    //
+#define SharpnessEnReg 			0x06    // edge enhancement enable
+#define SharpnessGaiReg			0x07    // edge enhancement gain
 #define GainModeReg 			0x00	// tbd (?)
 #define WBModeReg 				0x08    // AWD mode. ATW:0 AWC_SET:1 INDOOR:2 OUTDOOR:3 MANUAL:4 PUSH_TO_WHITE:5 (for AWC_SET usage)(?)
 
@@ -73,7 +75,7 @@
 #define ManuRWBReg     	    	0x0a	// Red when wb mode set to manual(4).
 
 #define AExReferleveReg		    0x04	// reference level Temp
-#define AExModeReg	        	0x02	// AEx mode. 0:auto 1:manual.
+#define AExModeReg	        	0x00	// AEx mode. 0:auto 1:manual.
 #define AExAGCReg	        	0x03    // AGC level. 0 ~ 0xff. read only when AEx mode is auto, otherwise, write only.
 #define DigZoomReg              0x2a    // digital zoom 1 ~ 25 (no autofocus system support)
 #define ShutterReg  			0x00    // shutter control. 0x00 ~ 0x12
@@ -87,15 +89,29 @@
 #define DayNightLevReg 			0x23    // day to night start level. 0 ~ 0x64
 #define NightDayLevReg 			0x24    // night to day start level. 0 ~ 0x64
 
-#define IrisAFReg 			    0x23    // Iris range. 0 ~ 0x30. fist byte represents MSB, sencond byte represents LSB
+#define IrisAFReg 			    0x23    // Iris range. 0 ~ 0x30. fist byte represents MSB, second byte represents LSB
 #define OpZoomReg 			    0x10    // Optical zoom register
+
+#define ExHysterReg				0x0b    // exposure hysteresis register
+#define AGCMaxLimtReg			0x0c    // exposure AGC maximum limitation register
+#define ExFinShutReg			0x02
+#define ExCtrlSpdReg			0xf8	// exposure control speed  register same as the AExModeReg!!!
+#define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
+#define ExEnhanceGainReg		0x07    // edge enhancement gain register same as the SharpnessReg2
+#define ExEnhanceStartReg		0x08    // edge enhancement start register
+#define ExEnhanceEndReg			0x09    // edge enhancement end register
+#define Ex2DNREnableReg			0x18    // 2D noise reduction enable register same as the NoiRedu3DModReg
+#define Ex2DNRGainReg			0x19    // 2d noise reduction gain register same as the NoiRedu3DLevReg
+#define Ex2DNRStartReg			0x1a    // 2D noise reduction start register
+#define Ex2DNREndReg			0x1b    // 2d noise reduction end register
+#define ExGammaReg				0x17    // gamma correction register
 
 /******** OSD Menu Control ************************************************/
 #define OSDMenuReg 	     		0x40    // write only. stop(no change):0 left:1 right:2 up:3 down:4 set(OSD_pup_up/return/enter):5
 #define OSDLogoReg 	     		0x66    // vidology logo. off:0 on:1
-#define BLCGainReg				0x11	// low:0 medium:1 high:2
-#define BLCEgeSetReg    		0x13	// [7:4]:Top/bottom [3:0]:left/right
-#define BLCCenterReg			0x14    // [7:4]:height [3:0]:width
+//#define BLCGainReg				0x11	// low:0 medium:1 high:2
+#define BLCPosReg    		 	0x14	// [7:4]:Top/bottom [3:0]:left/right
+#define BLCSizeReg				0x13    // [7:4]:height [3:0]:width
 #define BLCGridReg  			0x17	// BLC grid 1:on 0:off (area view)
 #define DayNightModeReg			0x20    // auto:0 day:1 night:2
 
@@ -123,7 +139,28 @@
 /* GPIO 24 on FX3 is used to detect snap shot button press/release. */
 #define SENSOR_SNAPSHOT_GPIO 24
 
-
+#if 1 // controls structure
+typedef struct SensorCtrl_t{
+	uint8_t		Reg1;		// the command register address1
+	uint8_t		Reg2;		// the command register address2
+	uint8_t		UVCLn;		// the command length
+	uint8_t		UVCMinLo;	// the command minimum value low byte
+	uint8_t		UVCMinHi;	// the command minimum value high byte
+	uint8_t		UVCMaxLo;	// the command maximum value low byte
+	uint8_t		UVCMaxHi;	// the command maximum value high byte
+	uint8_t		UVCResLo;	// the command Res. value low byte
+	uint8_t		UVCResHi;	// the command Res. value high byte
+	uint8_t		UVCInfoLo;	// the command information value low byte
+	uint8_t		UVCInfoHi;	// the command information value high byte
+	uint8_t		UVCDefVLo;	// the command default data value low byte
+	uint8_t		UVCDefVHi;	// the command default data value high byte
+	uint8_t		UVCCurVLo;	// the command current data value low byte
+	uint8_t		UVCCurVHi;	// the command current data value high byte
+	uint8_t		DeviceAdd;	// the device address
+	uint8_t		CheckF;		// the command checked flag
+	uint8_t		AvailableF;	// the command available flag
+}SensorCtrl;
+#endif
 /* Function    : SensorWrite2B
    Description : Write two bytes of data to image sensor over I2C interface.
    Parameters  :

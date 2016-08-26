@@ -17,15 +17,16 @@
 #include <cyu3externcstart.h>
 
 #define  MAXCMD      64
-#define  MAXSTA      32
+#define  MAXSTA      64
 #define  MAXPAR      8
 #define  CMDQU0      0
+#define  STAQU0      1
 /* for optical zoom operation */
 #define  TELEDATA    0x04
 #define  WIDEDATA    0x08
 #define  STOP        0x00
 /* end of the optical zoom define */
-#define  EXUAOFFSET  0x20
+#define  EXUAOFFSET  0x24
 
 /************* control handler **************/
 typedef enum UVCCtrlID{
@@ -59,7 +60,7 @@ typedef enum ExtCtrlID{
 	ExtNDlevCtlID8,         // Night Day level
 	ExtAexModCtlID9,        // Aex mode/agc
 	ExtExRefCtlID10,         // Ex reference level
-	ExtCtlID11,
+	ExtCtlShutlevCtlID11,    // shutter fine level (5MP b/w)
 	ExtCamMCtlID12,
 	ExtshotCtlID13,			//snap shot
 	ExtSensorParCtlID14,    //sensor parameters operation: recovery default settings; customer settings; store current settings
@@ -67,22 +68,22 @@ typedef enum ExtCtrlID{
 }ExtCtrlID_t;
 
 typedef enum ExtCtrlID1{
-	Ext1BLCRangeCtlID0 = 0x20,      // back light compensation range
-	Ext1BLCWeightCtlID1,           // back light compensation wieght factor
-	Ext1BLCGridCtlID2,
+	Ext1CtlID0 = 0x20,
+	Ext1CtlID1,
+	Ext1CtlID2,
 	Ext1CtlID3,
-	Ext1CtlID4,
-	Ext1CtlID5,
-	Ext1CtlID6,
-	Ext1CtlID7,
-	Ext1CtlID8,
-	Ext1CtlID9,
-	Ext1CtlID10,
-	Ext1CtlID11,
-	Ext1CtlID12,
-	Ext1CtlID13,
-	Ext1CtlID14,
-	Ext1CtlID15
+	Ext1BLCRangeCtlID4,   // back light compensation range
+	Ext1BLCWeightCtlID5,  // back light compensation wieght factor
+	Ext1BLCGridCtlID6,    // back light compensation grid state
+	Ext1ExHysterCtlID7,    // exposure hysteresis level (5MP b/w)
+	Ext1ExCtrlSpeedCtlID8,    // exposure control speed level (5MP b/w)
+	Ext1EnhanceModeCtlID9,    // edge enhancement mode (5MP b/w)
+	Ext1EnhanceGainCtlID10,    // edge enhancement gain level (5MP b/w)
+	Ext1EnhanceStarEndCtlID11, // edge enhancement start/end level (5MP b/w) 4bytes
+	Ext12DNRGainEnblCtlID12,  // 2D NR gain enable/gain level (5MP b/w)
+	Ext12DNRGainStarEndCtlID13,  // 2D NR gain start/end level (5MP b/w) 4bytes
+	Ext1GammaCorCtlID14,   // Gamma correction (5MP b/w)
+	Ext1AGCMaxLimetCtlID15 // AGC maximum limitation (5MP b/w)
 }ExtCtrlID1_t;
 
 
@@ -168,7 +169,7 @@ static uint8_t glEp0Buffer[32];
 
 /******** routines for the ring buffer operation **********/
 void  cmdquTest(VdRingBuf *cmdbuf, uint8_t state);  //it's used test the cmdqu data structure.
-VdRingBuf  cmdbufCreate(uint16_t size, CyU3PMutex *muxPtr);                  //create a command buffer.
+VdRingBuf  cmdbufCreate(uint16_t size, char * name, uint8_t id, CyU3PMutex *muxPtr);                  //create a command buffer.
 void  cmdquInit(VdRingBuf *cmdqu);                    //initialize the command queue.
 CyBool_t  cmdbufDestroy(VdRingBuf *cmdqu);
 
