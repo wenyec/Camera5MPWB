@@ -1390,7 +1390,7 @@ inline void ControlHandle(uint8_t CtrlID){
 								glEp0Buffer[0] = 0;
 							pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
 							glEp0Buffer[1] = 0; //pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;ExUCtrlParArry[CtrlID-0x20][14];
-							curFlag[CtrlID] = CyTrue;
+							//curFlag[CtrlID] = CyTrue;
 						 }
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[1];
@@ -1406,7 +1406,7 @@ inline void ControlHandle(uint8_t CtrlID){
 
 			 	 			glEp0Buffer[2] = SensorGetControl(RegAdd1, devAdd);
 			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = glEp0Buffer[2];
-			 	 			curFlag[CtrlID] = CyTrue;
+			 	 			//curFlag[CtrlID] = CyTrue;
 			 	 		 }
 						 glEp0Buffer[1] = 0;
 						 glEp0Buffer[3] = 0;
@@ -1497,7 +1497,7 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 				 sendData = glEp0Buffer[0];
 			 	 				 sendData1 = glEp0Buffer[2];
 			 	 			 }
-			 	 			 curFlag[CtrlID] = CyTrue;
+			 	 			 //curFlag[CtrlID] = CyTrue;
 			 	 		 }
 			 	 		 break;
 			 	 }
@@ -1523,7 +1523,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 }else{
 							Data0 = SensorGetControl(RegAdd0, devAdd);
 							pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
-							curFlag[CtrlID] = CyTrue;
+							//curFlag[CtrlID] = CyTrue;
 						 }
 						 //Data0 = CtrlParArry[CtrlID][13];  //SensorGetControl(RegAdd0, devAdd); //SensorGetBLCMode();
 						 /*//new implementation 8/23/2016
@@ -1543,7 +1543,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 }else{
 							Data0 = SensorGetControl(RegAdd0, devAdd);
 							pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
-							curFlag[CtrlID] = CyTrue;
+							//curFlag[CtrlID] = CyTrue;
 						 }
 
 						 glEp0Buffer[0] = Data0 + GREEN_BASE;
@@ -1566,7 +1566,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							glEp0Buffer[0]++;
 							pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
 							glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi; //CtrlParArry[CtrlID][14];
-							curFlag[CtrlID] = CyTrue;
+							//curFlag[CtrlID] = CyTrue;
 						 }
 
 						 sendData = glEp0Buffer[0];
@@ -1583,7 +1583,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							WBMenuCmpArry[0] = glEp0Buffer[0];//using for blue part
 							glEp0Buffer[2] = Data1;
 							WBMenuCmpArry[2]= glEp0Buffer[2];//using for red part
-							curFlag[CtrlID] = CyTrue;
+							//curFlag[CtrlID] = CyTrue;
 						 }
 						 glEp0Buffer[1] = 0;
 						 glEp0Buffer[3] = 0;
@@ -1630,7 +1630,7 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 				 sendData = glEp0Buffer[0];
 			 	 				 sendData1 = glEp0Buffer[2];
 			 	 			 }
-			 	 			 curFlag[CtrlID] = CyTrue;
+			 	 			 //curFlag[CtrlID] = CyTrue;
 			 	 		 }
 						 break;
 				 }
