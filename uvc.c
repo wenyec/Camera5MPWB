@@ -1571,7 +1571,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 if(curFlag[CtrlID]){
 
 							 if(is60Hz)
-								 glEp0Buffer[0] = 2;//CtrlParArry[CtrlID][13];//ext_control array;
+								 glEp0Buffer[0] = 0;//CtrlParArry[CtrlID][13];//ext_control array;
 							 else
 								 glEp0Buffer[0] = 1;
 
@@ -1579,7 +1579,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 }else{
 							Data0 = SensorGetControl(0x1, devAdd); //get resolution bit7 for main frequency information
 							glEp0Buffer[0] = (Data0&0x80)>>7;
-							glEp0Buffer[0]++;
+							//glEp0Buffer[0]++;
 							pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
 							glEp0Buffer[1] = pPUCSenCtrl[CtrlID]->UVCCurVHi; //CtrlParArry[CtrlID][14];
 							//curFlag[CtrlID] = CyTrue;
@@ -2126,7 +2126,7 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 						 case MFreqCtlID4:
 							 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
-							 Data0 = Data0 - 1;
+							 //Data0 = Data0 - 1;
 							 is60Hz = Data0;
 							 if(Data0 < 0)  //for specific check. if it's minor value, set to 0.
 							 {
@@ -2192,7 +2192,10 @@ inline void ControlHandle(uint8_t CtrlID){
 									CyU3PDebugPrint (4, "back light compensation setting is not correct. %d %d\r\n", CamMode, getData);
 									Data0 = 4; //set to default.
 					 			 }
+					 		 }else{
+					 			 Data0 |= EXTBLCGrid.UVCCurVLo << 7;
 					 		 }
+
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
 							 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
