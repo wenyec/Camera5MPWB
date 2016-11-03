@@ -45,7 +45,7 @@ const uint8_t CyFxUSBDeviceDscr[] =
         0x40,                           /* Maxpacket size for EP0 : 64 bytes */
         0xBD,0x1B,                      /* Vendor ID 0xB4,0x04(Cypress); 0xBD,0x1B (Videology)*/
 #ifndef CAM720
-        0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
+        0x50,0xff,//0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
 #else
         0x62,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x62,0x30, (color USB3.0 Cam 720p NTSC)*/
 #endif
@@ -477,7 +477,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class Specific I/f Header Descriptor type */
         0x01,                           /* Descriptor Sub type : VC_HEADER */
         0x00,0x01,                      /* Revision of class spec : 1.0 */
-        0x50,0x00,                      /* Total Size of class specific descriptors (till Output terminal) */
+        0x51,0x00,                      /* Total Size of class specific descriptors (till Output terminal) */
         0x00,0xd8,0xb8,0x05,  //(96Mhz) /* Clock frequency : 74.25MHz(Deprecated) (0x10,0xf7,0x6c,0x04,)*/
         0x01,                           /* Number of streaming interfaces */
         0x01,                           /* Video streaming I/f 1 belongs to VC i/f */

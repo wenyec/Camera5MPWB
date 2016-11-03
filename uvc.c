@@ -1401,9 +1401,8 @@ inline void ControlHandle(uint8_t CtrlID){
 							 glEp0Buffer[2] = pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi;
 			 	 		 }else{
 			 	 			glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0]; // keep the original data.
 			 	 			glEp0Buffer[0] = glEp0Buffer[0]&0x3; // 1:0 for Aex Mode
-			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
-
 			 	 			glEp0Buffer[2] = SensorGetControl(RegAdd1, devAdd);
 			 	 			pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = glEp0Buffer[2];
 			 	 			//curFlag[CtrlID] = CyTrue;
@@ -1412,7 +1411,7 @@ inline void ControlHandle(uint8_t CtrlID){
 						 glEp0Buffer[3] = 0;
 						 sendData = glEp0Buffer[0];
 						 sendData1 = glEp0Buffer[2];
-						 CyU3PDebugPrint (4, "ExpM&AGC sent to host. %d %d; %d %d\r\n", glEp0Buffer[0], glEp0Buffer[1], glEp0Buffer[2], glEp0Buffer[3]);
+						 CyU3PDebugPrint (4, "ExpM&AGC sent to host. %d %d; %d %d\r\n", glEp0Buffer[0], pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo, glEp0Buffer[2], CtrlID);
 						 break;
 				 	 case ExtCamMCtlID12: //EXTCamMode
 #if 0 //not be used
@@ -1450,8 +1449,8 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 	 case Ext1ExCtrlSpeedCtlID8:
 			 	 		 sendData = SensorGetControl(RegAdd1, devAdd);
 			 	 		// sendData &= 0x70;
-	 	 				 glEp0Buffer[0] = sendData >> 4; // bit6:4 are significant bits. bit7 is fine shutter & shutter speed control
-	 	 				 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];
+	 	 				 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = glEp0Buffer[0];// keep original data.
+	 	 				 glEp0Buffer[0] = (sendData >> 4)&0xF; // bit6:4 are significant bits. bit7 is fine shutter & shutter speed control with Viewer part.
 	 	 				 glEp0Buffer[1] = 0;
 	 	 				 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = glEp0Buffer[1];
 	 	 				 sendData = glEp0Buffer[0];
@@ -1883,17 +1882,19 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 				 	 	 case ExtAexModCtlID9://4byte
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
-							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0)
-							 {
-								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;//exposure mode (assume b3:2=00, no BLC window). CtrlParArry[CtrlID][13]
-								 Data0 = Data0 | (EXTShutter.UVCCurVLo << 4);
-								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set first byte
-								 dataIdx++;
-							 }
-							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi != Data1){
+							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi != Data1){//if it's GC settings, the Ex Mode doesn't need to set.
 								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVHi = Data1;//AGC. CtrlParArry[CtrlID][14]
-								 if(Data0 == 2 || Data0 == 3){
+								 if(1 || Data0 == 2 || Data0 == 3){
 									 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data1, dataIdx);  //AGC
+								 }
+							 }else{//if it's not GC settings, the Ex Mode does need to set.
+								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = SensorGetControl(RegAdd0, devAdd);
+								 if((pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo&0x03) != Data0)
+								 {
+									 Data0 = Data0 | (pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo & 0xFC);//exposure mode bit0:1 (keep the data the same as the reg.00 has). CtrlParArry[CtrlID][13]
+									 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0; //keep the valus is the same as the Reg. has.
+									 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set first byte
+									 dataIdx++;
 								 }
 							 }
 							 pEXTSenCtrl[CtrlID - 0x10]->AvailableF = CyTrue;
@@ -1903,26 +1904,28 @@ inline void ControlHandle(uint8_t CtrlID){
 									 EXTShutter.UVCCurVLo, Data0, Data1);
 							 break;
 					 	 case ExtShutCtlID0: //special!!
-							 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0; //CtrlParArry[CtrlID][13] save new setting
 	#if 1	// register setting directly
-						     if((EXTAexModGainlev.UVCCurVLo&0x3) != 0)//based on the Aex Mode 2 has been masked in viewer!!!
+						     if(1||(EXTAexModGainlev.UVCCurVLo&0x3) != 0)//based on the Aex Mode 2 has been masked in viewer!!!
 						     {
-						    	 Data0 = (Data0 << 4) | (EXTAexModGainlev.UVCCurVLo);
+						    	 Data1 = SensorGetControl(RegAdd0, devAdd);
+						    	 Data0 = (Data0 << 4) | (Data1 & 0x8F);
+						    	 if (pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0)
 						    	 dataIdx = 0;
 								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 								 //cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, 0x00, dataIdx);  //clean Axmode2 bit7
 								 //dataIdx++;
 								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //First
 								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
+								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0; //CtrlParArry[CtrlID][13] save new setting (it's the same as the Reg. has.)
 						     }
 						     CyU3PDebugPrint (4, "The shutter&exposure 0x%x 0x%x 0x%x 0x%x\r\n",
 						    		 Data1, Data0, EXTAexModGainlev.UVCCurVLo, EXTShutter.UVCCurVLo);
 						     break;
-						 case ExtCtlShutlevCtlID11://shutter level 2bytes standard operation!!!
+						 case ExtCtlShutlevCtlID11://Fine shutter level 2bytes standard operation!!!
 							 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0){
 								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;//AGC. CtrlParArry[CtrlID][14]
-								 if(EXTAexModGainlev.UVCCurVLo == 1 || EXTAexModGainlev.UVCCurVLo == 3){
+								 if(1 || EXTAexModGainlev.UVCCurVLo == 1 || EXTAexModGainlev.UVCCurVLo == 3){
 									 //cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, 0x80, dataIdx);  //set AxMode2 bit7
 									 //dataIdx++;
 									 cmdSet(cmdQuptr, CtrlID, RegAdd1, devAdd, Data0, dataIdx);  //shutter level
@@ -2011,10 +2014,10 @@ inline void ControlHandle(uint8_t CtrlID){
 							 break;
 				 	 	 case Ext1ExCtrlSpeedCtlID8:
 							 if(pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo != Data0){  //2Bytes
-								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;//AGC. CtrlParArry[CtrlID][14]
 								 Data1 = SensorGetControl(RegAdd0, devAdd); //get the origin data as the fine shutter enable uses the same reg.
 								 Data1 &= 0x0F; Data0 = (Data0&0x0F) << 4;
 								 Data0 |= Data1;
+								 pEXTSenCtrl[CtrlID - 0x10]->UVCCurVLo = Data0;//AGC. CtrlParArry[CtrlID][14]. Saving the value is the same as what the Reg. has
 								 CyU3PMutexGet(cmdQuptr->ringMux, CYU3P_WAIT_FOREVER);       //get mutex
 								 cmdSet(cmdQuptr, CtrlID, RegAdd0, devAdd, Data0, dataIdx);  //set data
 								 CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
@@ -2127,16 +2130,16 @@ inline void ControlHandle(uint8_t CtrlID){
 						 case MFreqCtlID4:
 							 pPUCSenCtrl[CtrlID]->UVCCurVLo = Data0;
 							 //Data0 = Data0 - 1;
-							 is60Hz = Data0;
-							 if(Data0 < 0)  //for specific check. if it's minor value, set to 0.
+							 //is60Hz = Data0;
+							 if(Data0 <= 0)  //for specific check. if it's minor value, set to 0.
 							 {
-								 Data0 = 0;  // 50Hz (PAL)
-								 is60Hz = CyFalse;
-							 }
-							 else if(Data0 >2)
-							 {
-								 Data0 = 1;  // 60Hz (NTSC)
+								 Data0 = 0;  // 60Hz (PAL)
 								 is60Hz = CyTrue;
+							 }
+							 else if(Data0 >= 1)
+							 {
+								 Data0 = 1;  // 50Hz (NTSC)
+								 is60Hz = CyFalse;
 							 }
 							 CyU3PDebugPrint (4, "Frequency setting is  %d %d\r\n", Data0, is60Hz);
 							 if (gpif_initialized == CyTrue)
@@ -3987,6 +3990,7 @@ UVCHandleCameraTerminalRqts (
 
     switch (wValue)
     {
+#if 0 // cancel the CT controls
     	case CY_FX_UVC_CT_SCANNING_MODE_CONTROL:
     		CtrlAdd = CTCtrlParArry[ScanMCtlID0][0];
     		CTControlHandle(ScanMCtlID0);
@@ -4036,7 +4040,7 @@ UVCHandleCameraTerminalRqts (
     		CtrlAdd = CTCtrlParArry[ZmOpRCtlID10][0];
     		CTControlHandle(ZmOpRCtlID10);
     		break;
-
+#endif
         default:
             /*
              * Only the  control is supported as of now. Add additional code here to support
@@ -5189,6 +5193,8 @@ void I2cAppThread_Entry(uint32_t input){
 				}else{
 					CyU3PTimerModify(&I2CCmdTimer, 1000, 0);
 					CyU3PTimerStart(&I2CCmdTimer);
+//					CyU3PDebugPrint (4, "I2C thread beat pace 0x%x\r\n",
+//							1000);
 				}
 			CyU3PMutexPut(cmdQuptr->ringMux);  //release the command queue mutex
 			}
