@@ -1613,7 +1613,12 @@ inline void ControlHandle(uint8_t CtrlID){
 			 	 		 }else{
 			 	 			 if(Len == 2)
 			 	 			 {
-			 	 				 glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);
+			 	 				 glEp0Buffer[0] = SensorGetControl(RegAdd0, devAdd);
+			 	 				 if(glEp0Buffer[0]&0x1){// the enhancement on
+			 	 					 glEp0Buffer[0] = SensorGetControl(RegAdd1, devAdd);// get the enhancement level
+			 	 				 }else{
+			 	 					glEp0Buffer[0] = 0; // the enhancement off
+			 	 				 }
 			 	 				 pPUCSenCtrl[CtrlID]->UVCCurVLo = glEp0Buffer[0];
 			 	 				 glEp0Buffer[1] = 0;
 			 	 				 pPUCSenCtrl[CtrlID]->UVCCurVHi = glEp0Buffer[1];

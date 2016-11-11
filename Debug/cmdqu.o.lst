@@ -1003,30 +1003,30 @@
  631              		.file 10 "C:\\Program Files (x86)\\Cypress\\EZ-USB FX3 SDK\\1.3\\\\firmware\\u3p_firmware\\inc/cyu
 DEFINED SYMBOLS
                             *ABS*:00000000 cmdqu.c
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:16     .text:00000000 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:19     .text:00000000 creatqu
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:39     .text:00000010 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:43     .text:00000014 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:46     .text:00000014 cmdquTest
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:126    .text:000000b4 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:132    .text:000000c0 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:135    .text:000000c0 cmdbufCreate
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:202    .text:00000128 cmdquInit
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:310    .text:000001e4 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:314    .text:000001e8 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:317    .text:000001e8 cmdbufDestroy
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:335    .text:000001f0 cmdSet
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:422    .text:00000280 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:427    .text:00000288 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:430    .text:00000288 statGet
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:513    .text:00000310 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:517    .text:00000314 $a
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:520    .text:00000314 cmdFind
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:536    .rodata:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:540    .rodata:00000000 DelayArray
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:593    .rodata.str1.4:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:615    .bss:00000000 $d
-C:\Users\wcheng\AppData\Local\Temp\cckjQO5T.s:619    .bss:00000000 glEp0Buffer
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:16     .text:00000000 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:19     .text:00000000 creatqu
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:39     .text:00000010 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:43     .text:00000014 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:46     .text:00000014 cmdquTest
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:126    .text:000000b4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:132    .text:000000c0 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:135    .text:000000c0 cmdbufCreate
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:202    .text:00000128 cmdquInit
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:310    .text:000001e4 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:314    .text:000001e8 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:317    .text:000001e8 cmdbufDestroy
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:335    .text:000001f0 cmdSet
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:422    .text:00000280 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:427    .text:00000288 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:430    .text:00000288 statGet
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:513    .text:00000310 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:517    .text:00000314 $a
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:520    .text:00000314 cmdFind
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:536    .rodata:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:540    .rodata:00000000 DelayArray
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:593    .rodata.str1.4:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:615    .bss:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccsOU8JF.s:619    .bss:00000000 glEp0Buffer
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
