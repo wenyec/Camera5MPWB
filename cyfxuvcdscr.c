@@ -68,7 +68,7 @@ const uint8_t CyFxUSBDeviceDscrSS[] =
         0x09,                           /* Maxpacket size for EP0 : 2^9 Bytes */
         0xBD,0x1B,                      /* Vendor ID 0xB4,0x04(Cypress); 0xBD,0x1B (Videology)*/
 #ifndef CAM720
-        0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
+        0x50,0xff,//0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
 #else
         0x62,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x62,0x30, (color USB3.0 Cam 720p NTSC)*/
 #endif
