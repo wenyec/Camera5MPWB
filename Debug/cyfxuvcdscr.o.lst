@@ -754,8 +754,8 @@
  772 02d3 09       		.byte	9
  773 02d4 BD       		.byte	-67
  774 02d5 1B       		.byte	27
- 775 02d6 61       		.byte	97
- 776 02d7 30       		.byte	48
+ 775 02d6 50       		.byte	80
+ 776 02d7 FF       		.byte	-1
  777 02d8 00       		.byte	0
  778 02d9 00       		.byte	0
  779 02da 01       		.byte	1
@@ -789,16 +789,16 @@
  809              		.file 3 "c:\\program files (x86)\\cypress\\ez-usb fx3 sdk\\1.3\\arm gcc\\arm-none-eabi\\include\\s
 DEFINED SYMBOLS
                             *ABS*:00000000 cyfxuvcdscr.c
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:30     .rodata:00000000 CyFxUSBProductDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:81     .rodata:00000030 CyFxUSBManufactureDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:140    .rodata:00000068 CyFxUSBStringLangIDDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:147    .rodata:0000006c CyFxUSBSSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:486    .rodata:000001bc CyFxUSBBOSDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:512    .rodata:000001d4 CyFxUSBHSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:737    .rodata:000002b4 CyFxUSBFSConfigDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:750    .rodata:000002c0 CyFxUSBDeviceQualDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:764    .rodata:000002cc CyFxUSBDeviceDscrSS
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:786    .rodata:000002e0 CyFxUSBDeviceDscr
-C:\Users\wcheng\AppData\Local\Temp\cclkOVhi.s:27     .rodata:00000000 $d
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:30     .rodata:00000000 CyFxUSBProductDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:81     .rodata:00000030 CyFxUSBManufactureDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:140    .rodata:00000068 CyFxUSBStringLangIDDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:147    .rodata:0000006c CyFxUSBSSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:486    .rodata:000001bc CyFxUSBBOSDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:512    .rodata:000001d4 CyFxUSBHSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:737    .rodata:000002b4 CyFxUSBFSConfigDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:750    .rodata:000002c0 CyFxUSBDeviceQualDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:764    .rodata:000002cc CyFxUSBDeviceDscrSS
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:786    .rodata:000002e0 CyFxUSBDeviceDscr
+C:\Users\wcheng\AppData\Local\Temp\ccFusbFB.s:27     .rodata:00000000 $d
 
 NO UNDEFINED SYMBOLS
