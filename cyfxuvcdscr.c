@@ -615,6 +615,20 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x04,                           /* Subtype : uncompressed format I/F */
         0x01,                           /* Format desciptor index */
         0x04,                           /* Number of frame descriptor followed */
+#if 1 //for Y16 video format
+        /* Y16 GUID {20363159-0000-0010-8000-00AA00389B71} */
+        0x59,0x31,0x36,0x20,            /* GUID used to identify streaming-encoding format: YUY2 --> Is this correct, the order I got from Wim, next 3 lines are reversed?????????? */
+        0x00,0x00,0x10,0x00,			/* From Wim: 00 00 00 10,*/
+        0x80,0x00,0x00,0xAA,			/*         : 80 00 00 AA,*/
+        0x00,0x38,0x9B,0x71,			/*         : 00 38 9B 71, --> first line from Wim was 32 59 55 59*/
+        0x10,                           /* Number of bits per pixel  WAS 0x10 **********************************************************************/
+        0x01,                           /* Optimum Frame Index for this stream: 1 */
+        0x10,                           /* X dimension of the picture aspect ratio; Non-interlaced */
+        0x09,                           /* Y dimension of the pictuer aspect ratio: Non-interlaced */
+        0x00,                           /* Interlace Flags: Progressive scanning, no interlace */
+        0x00,                           /* duplication of the video stream restriction: 0 - no restriction */
+#else //for YUY2 format
+        /* YUY2 GUID {32595559-0000-0010-8000-00AA00389B71} */
         0x59,0x55,0x59,0x32,            /* GUID used to identify streaming-encoding format: YUY2 --> Is this correct, the order I got from Wim, next 3 lines are reversed?????????? */
         0x00,0x00,0x10,0x00,			/* From Wim: 00 00 00 10,*/
         0x80,0x00,0x00,0xAA,			/*         : 80 00 00 AA,*/
@@ -625,7 +639,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x09,                           /* Y dimension of the pictuer aspect ratio: Non-interlaced */
         0x00,                           /* Interlace Flags: Progressive scanning, no interlace */
         0x00,                           /* duplication of the video stream restriction: 0 - no restriction */
-
+#endif
         /* Class specific Uncompressed VS frame descriptor 1 for Full Res 2592x1944*/
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
