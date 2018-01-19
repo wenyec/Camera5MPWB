@@ -94,8 +94,8 @@
 
 #define ExHysterReg				0x0b    // exposure hysteresis register
 #define AGCMaxLimtReg			0x0c    // exposure AGC maximum limitation register
-#define ExFinShutReg			0x02
-#define ExCtrlSpdReg			0xf8	// exposure control speed  register same as the AExModeReg!!!
+#define ExFinShutReg			0x02	// fine shutter control register same as the ExCtrlSpdReg (7)!!!
+#define ExCtrlSpdReg			0x02	// exposure control speed  register same as the ExFinShutReg (6:4)!!!
 #define ExEnhanceModeReg		0x06    // edge enhancement mode register same as the SharpnessReg1
 #define ExEnhanceGainReg		0x07    // edge enhancement gain register same as the SharpnessReg2
 #define ExEnhanceStartReg		0x08    // edge enhancement start register

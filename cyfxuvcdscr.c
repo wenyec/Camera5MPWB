@@ -45,7 +45,7 @@ const uint8_t CyFxUSBDeviceDscr[] =
         0x40,                           /* Maxpacket size for EP0 : 64 bytes */
         0xBD,0x1B,                      /* Vendor ID 0xB4,0x04(Cypress); 0xBD,0x1B (Videology)*/
 #ifndef CAM720
-        0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
+        0x50,0xff,//0x61,0x30,          /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC), 0x50,0xff for 5MP w/b; 0x51, 0xff for 5MP col*/
 #else
         0x62,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x62,0x30, (color USB3.0 Cam 720p NTSC)*/
 #endif
@@ -68,7 +68,8 @@ const uint8_t CyFxUSBDeviceDscrSS[] =
         0x09,                           /* Maxpacket size for EP0 : 2^9 Bytes */
         0xBD,0x1B,                      /* Vendor ID 0xB4,0x04(Cypress); 0xBD,0x1B (Videology)*/
 #ifndef CAM720
-        0x61,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)*/
+        0x50,0xff,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x61,0x30, (color USB3.0 Cam 1080p NTSC)
+        									0x50,0xff for 5MP w/b; 0x51, 0xff for 5MP col*/
 #else
         0x62,0x30,                      /* Product ID 0xFA,0x00(Cypress FX3); 0x62,0x30, (color USB3.0 Cam 720p NTSC)*/
 #endif
@@ -477,7 +478,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class Specific I/f Header Descriptor type */
         0x01,                           /* Descriptor Sub type : VC_HEADER */
         0x00,0x01,                      /* Revision of class spec : 1.0 */
-        0x50,0x00,                      /* Total Size of class specific descriptors (till Output terminal) */
+        0x51,0x00,                      /* Total Size of class specific descriptors (till Output terminal) */
         0x00,0xd8,0xb8,0x05,  //(96Mhz) /* Clock frequency : 74.25MHz(Deprecated) (0x10,0xf7,0x6c,0x04,)*/
         0x01,                           /* Number of streaming interfaces */
         0x01,                           /* Video streaming I/f 1 belongs to VC i/f */
@@ -545,7 +546,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                           /* Number of input pins in this terminal */
         0x02,                           /* Source ID : 1: connected to input terminal 2 : Connected to Proc Unit  0x02*/
         0x04,                           /* Size of controls field for this terminal : 3 bytes */
-        0xfd,0x9f,0xff/*7*/,
+        0xfd,0xdf,0xff/*7*/,
         0x0e, // 0x04,0x86,0x00,           /* controls supported */
         0x00,                           /* String desc index : Not used */
 
